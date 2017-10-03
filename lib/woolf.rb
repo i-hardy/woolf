@@ -1,19 +1,25 @@
-require "dinosaurus"
 require "discordrb"
+require "wordnik"
 require_relative "woolf_server"
+
+# Wordnik.configure do |config|
+# 	config.api_key = ENV["WORDNIK_API_KEY"]
+# end
 
 class Woolf
   SPRINT_REGEX = /!sprint in (\d+) for (\d+)/ unless const_defined?(:SPRINT_REGEX)
+  SYN_REGEX = /!synonym\s([a-zA-Z]*\b+)/ unless const_defined?(:SYN_REGEX)
+  RANDOM_REGEX = /!random\s(noun|adj)/ unless const_defined?(:RANDOM_REGEX)
 
   @@virginia = Discordrb::Bot.new token: ENV["WOOLF_BOT_TOKEN"],
   client_id: ENV["WOOLF_CLIENT_ID"], name: "woolf"
 
   def self.commands_list
-    "Do not ask too much of me: \n
+    "There is no gate, no lock, no bolt that you can set upon the freedom of my mind: \n
               - To set up a writing sprint for y minutes in x minutes' time, type \"!sprint in x for y\"\n
               - To opt-in to a sprint that's running, type \"!sprinting\" \n
-              - To be notified of every sprint, type \"!stamina\" \n
-              - To stop being notified of every sprint, type \"!tired\" \n"
+              - To be notified of every sprint, type \"!sprint role\" \n
+              - To stop being notified of every sprint, type \"!remove sprint role\" \n"
   end
 
   def self.server_finder(server)
@@ -49,16 +55,25 @@ class Woolf
 
   @@virginia.message(contains: "!sprinting") do |event|
     Woolf.server_finder(event.server).get_sprinters(event)
+    event.respond "#{event.author.mention} so to work, even in poverty and obscurity, is worth while"
   end
 
-  @@virginia.message(contains: "!stamina") do |event|
+  @@virginia.message(contains: "!sprint role") do |event|
     Woolf.server_finder(event.server).permasprinters(event.author)
-    event.respond "Woof! Your stamina is impressive!"
+    event.respond "#{event.author.mention}, we have the habit of freedom and the courage to write exactly what we think"
   end
 
-  @@virginia.message(contains: "!tired") do |event|
+  @@virginia.message(contains: "!remove sprint role") do |event|
     Woolf.server_finder(event.server).tired_sprinters(event.author)
-    event.respond "Woof! You seem tired"
+    event.respond "#{event.author.mention} died young — alas, she never wrote a word..."
+  end
+
+  @@virginia.message(contains: "!synonym") do |event|
+    Woolf.server_finder(event.server).get_synonym(event)
+  end
+
+  @@virginia.message(contains: "!random") do |event|
+    Woolf.server_finder(event.server).get_random(event)
   end
 
   if __FILE__ == $0

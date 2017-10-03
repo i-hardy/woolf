@@ -73,4 +73,24 @@ describe WoolfServer do
       expect(woolf_server.tired_sprinters(vita)).to eq "sprinters"
     end
   end
+
+  describe "#get_synonym" do
+    it "passes a word to a Wordnik synonym API call" do
+      allow(event).to receive_message_chain("message.content.match.captures") { ["lighthouse"] }
+      allow(event).to receive(:respond)
+      allow(event).to receive_message_chain("author.mention") { "@vita" }
+      expect(Wordnik).to receive_message_chain("word.get_related")
+      woolf_server.get_synonym(event)
+    end
+  end
+
+  describe "#get_random" do
+    it "passes a word to a Wordnik random word API call" do
+      allow(event).to receive_message_chain("message.content.match.captures") { ["noun"] }
+      allow(event).to receive(:respond)
+      allow(event).to receive_message_chain("author.mention") { "@vita" }
+      expect(Wordnik).to receive_message_chain("words.get_random_word")
+      woolf_server.get_random(event)
+    end
+  end
 end

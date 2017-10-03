@@ -34,6 +34,17 @@ class WoolfServer
     sprinter.remove_role(sprinting_role)
   end
 
+  def get_synonym(event)
+    word = event.message.content.match(Woolf::SYN_REGEX).captures.pop
+    Wordnik.word.get_related(word, :type => "synonym")
+  end
+
+  def get_random(event)
+    type = event.message.content.match(Woolf::RANDOM_REGEX).captures.find { |item| !!item }
+    word = Wordnik.words.get_random_word(:part_of_speech => type)
+    event.respond "#{event.author.mention} #{word}"
+  end
+
   private
   attr_reader :timer, :timer_class, :sprinting_role, :role_by_name
 
