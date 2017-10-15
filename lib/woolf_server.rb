@@ -36,13 +36,17 @@ class WoolfServer
 
   def get_synonym(event)
     word = event.message.content.match(Woolf::SYN_REGEX).captures.pop
-    Wordnik.word.get_related(word, :type => "synonym")
+    event.respond "#{event.author.mention} #{Dinosaurus.synonyms_of(word).join(", ")}"
   end
 
-  def get_random(event)
-    type = event.message.content.match(Woolf::RANDOM_REGEX).captures.find { |item| !!item }
-    word = Wordnik.words.get_random_word(:part_of_speech => type)
-    event.respond "#{event.author.mention} #{word}"
+  def get_antonym(event)
+    word = event.message.content.match(Woolf::ANT_REGEX).captures.pop
+    event.respond "#{event.author.mention} #{Dinosaurus.antonyms_of(word).join(", ")}"
+  end
+
+  def inspire(event)
+    photo = flickr.interestingness.getList.to_a.sample
+    event.respond "#{event.author.mention} #{FlickRaw.url(photo)}"
   end
 
   private

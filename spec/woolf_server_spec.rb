@@ -75,22 +75,40 @@ describe WoolfServer do
   end
 
   describe "#get_synonym" do
-    it "passes a word to a Wordnik synonym API call" do
+    it "passes a word to a Dinosaurus API call" do
       allow(event).to receive_message_chain("message.content.match.captures") { ["lighthouse"] }
       allow(event).to receive(:respond)
       allow(event).to receive_message_chain("author.mention") { "@vita" }
-      expect(Wordnik).to receive_message_chain("word.get_related")
+      expect(Dinosaurus).to receive_message_chain("synonyms_of.join")
       woolf_server.get_synonym(event)
     end
   end
 
-  describe "#get_random" do
-    it "passes a word to a Wordnik random word API call" do
-      allow(event).to receive_message_chain("message.content.match.captures") { ["noun"] }
+  describe "#get_antonym" do
+    it "passes a word to a Dinosaurus API call" do
+      allow(event).to receive_message_chain("message.content.match.captures") { ["waves"] }
       allow(event).to receive(:respond)
       allow(event).to receive_message_chain("author.mention") { "@vita" }
-      expect(Wordnik).to receive_message_chain("words.get_random_word")
-      woolf_server.get_random(event)
+      expect(Dinosaurus).to receive_message_chain("antonyms_of.join")
+      woolf_server.get_antonym(event)
+    end
+  end
+
+  describe "#inspire" do
+    it "makes a Flickr api call" do
+      allow(event).to receive(:respond)
+      allow(event).to receive_message_chain("author.mention") { "@vita" }
+      allow(FlickRaw).to receive(:url)
+      expect(flickr).to receive_message_chain("interestingness.getList.to_a.sample")
+      woolf_server.inspire(event)
+    end
+
+    it "returns the randomly selected photo's url" do
+      allow(event).to receive(:respond)
+      allow(event).to receive_message_chain("author.mention") { "@vita" }
+      allow(flickr).to receive_message_chain("interestingness.getList.to_a.sample")
+      expect(FlickRaw).to receive(:url)
+      woolf_server.inspire(event)
     end
   end
 end
