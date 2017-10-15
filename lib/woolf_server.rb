@@ -5,6 +5,7 @@ require_relative "sprint_timer"
 class WoolfServer
   ROLE_NAME = "sprinters"
   ROLE_BY_NAME = Proc.new { |role| role.name == ROLE_NAME }
+  NO_RESULT_RESPONSE = "Little words that broke up the thought and dismembered it said nothing..."
   attr_reader :server
 
   def initialize(server, timer_class: SprintTimer)
@@ -36,12 +37,16 @@ class WoolfServer
 
   def get_synonym(event)
     word = event.message.content.match(Woolf::SYN_REGEX).captures.pop
-    event.respond "#{event.author.mention} #{Dinosaurus.synonyms_of(word).join(", ")}"
+    synonyms = Dinosaurus.synonyms_of(word)
+    synonyms.empty? ? response = NO_RESULT_RESPONSE : response = synonyms.join(", ")
+    event.respond "#{event.author.mention} #{response}"
   end
 
   def get_antonym(event)
     word = event.message.content.match(Woolf::ANT_REGEX).captures.pop
-    event.respond "#{event.author.mention} #{Dinosaurus.antonyms_of(word).join(", ")}"
+    antonyms = Dinosaurus.antonyms_of(word)
+    antonyms.empty? ? response = NO_RESULT_RESPONSE : response = antonyms.join(", ")
+    event.respond "#{event.author.mention} #{response}"
   end
 
   def inspire(event)
