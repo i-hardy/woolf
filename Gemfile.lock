@@ -1,5 +1,5 @@
 GIT
-  remote: https://github.com/meew0/discordrb.git
+  remote: git://github.com/meew0/discordrb.git
   revision: 50379e92b82f3e7bbd0425276e9ea65fd9cb47ce
   specs:
     discordrb (3.2.1)

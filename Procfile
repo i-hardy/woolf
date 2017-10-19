@@ -1,1 +1,1 @@
-worker: ruby ./lib/woolf.rb
+worker: bundle exec ruby ./lib/woolf.rb
