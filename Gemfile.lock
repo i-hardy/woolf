@@ -1,3 +1,16 @@
+GIT
+  remote: https://github.com/meew0/discordrb.git
+  revision: 50379e92b82f3e7bbd0425276e9ea65fd9cb47ce
+  specs:
+    discordrb (3.2.1)
+      discordrb-webhooks (~> 3.2.0.1)
+      opus-ruby
+      rbnacl (~> 3.4.0)
+      rest-client
+      websocket-client-simple (>= 0.3.0)
+    discordrb-webhooks (3.2.0.1)
+      rest-client
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -12,14 +25,6 @@ GEM
       activesupport
       httparty
       rake
-    discordrb (3.2.1)
-      discordrb-webhooks (~> 3.2.0.1)
-      opus-ruby
-      rbnacl (~> 3.4.0)
-      rest-client
-      websocket-client-simple (>= 0.3.0)
-    discordrb-webhooks (3.2.0.1)
-      rest-client
     docile (1.1.5)
     domain_name (0.5.20170404)
       unf (>= 0.0.5, < 1.0.0)
@@ -81,10 +86,13 @@ PLATFORMS
 
 DEPENDENCIES
   dinosaurus
-  discordrb
+  discordrb!
   flickraw
   rspec
   simplecov
+
+RUBY VERSION
+   ruby 2.4.1p111
 
 BUNDLED WITH
    1.15.4
