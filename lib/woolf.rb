@@ -18,6 +18,8 @@ class Woolf
   @@virginia = Discordrb::Bot.new token: ENV["WOOLF_BOT_TOKEN"],
   client_id: ENV["WOOLF_CLIENT_ID"], name: "woolf"
 
+  $stdout.sync = true
+
   def self.commands_list
     "There is no gate, no lock, no bolt that you can set upon the freedom of my mind: \n
               - To set up a writing sprint for y minutes in x minutes' time, type \"!sprint in x for y\"\n
