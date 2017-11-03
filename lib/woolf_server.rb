@@ -17,14 +17,23 @@ class WoolfServer
   end
 
   def writing_sprint(event)
-    raise "One sprint at a time!" unless no_sprint?
-    sprint_init(event)
-    timer.set_start
+    begin
+      raise "One sprint at a time!" unless no_sprint?
+      sprint_init(event)
+      timer.set_start
+    rescue
+      puts "Attempt to run two sprints at once in #{@server.name}"
+    end
   end
 
   def get_sprinters(event)
-    raise "No sprint is running" if no_sprint?
-    timer.add_sprinters(event.author)
+    begin
+      raise "No sprint is running" if no_sprint?
+      timer.add_sprinters(event.author)
+      event.respond "#{event.author.mention} so to work, even in poverty and obscurity, is worth while"
+    rescue
+      puts "Attempt to opt-in to a nonexistent sprint in #{@server.name}"
+    end
   end
 
   def permasprinters(sprinter)
@@ -36,22 +45,37 @@ class WoolfServer
   end
 
   def get_synonym(event)
-    word = event.message.content.match(Woolf::SYN_REGEX).captures.pop
-    synonyms = Dinosaurus.synonyms_of(word)
-    synonyms.empty? ? response = NO_RESULT_RESPONSE : response = synonyms.join(", ")
+    begin
+      word = event.message.content.match(Woolf::SYN_REGEX).captures.pop
+      synonyms = Dinosaurus.synonyms_of(word)
+      synonyms.empty? ? response = NO_RESULT_RESPONSE : response = synonyms.join(", ")
+    rescue StandardError
+      puts "Searchable word not found in #{event.message.content}, in server #{@server.name}"
+      response = NO_RESULT_RESPONSE
+    end
     event.respond "#{event.author.mention} #{response}"
   end
 
   def get_antonym(event)
-    word = event.message.content.match(Woolf::ANT_REGEX).captures.pop
-    antonyms = Dinosaurus.antonyms_of(word)
-    antonyms.empty? ? response = NO_RESULT_RESPONSE : response = antonyms.join(", ")
+    begin
+      word = event.message.content.match(Woolf::ANT_REGEX).captures.pop
+      antonyms = Dinosaurus.antonyms_of(word)
+      antonyms.empty? ? response = NO_RESULT_RESPONSE : response = antonyms.join(", ")
+    rescue
+      puts "Searchable word not found in #{event.message.content}, in server #{@server.name}"
+      response = NO_RESULT_RESPONSE
+    end
     event.respond "#{event.author.mention} #{response}"
   end
 
   def inspire(event)
-    photo = flickr.interestingness.getList.to_a.sample
-    event.respond "#{event.author.mention} #{FlickRaw.url(photo)}"
+    begin
+      photo = flickr.interestingness.getList.to_a.sample
+      event.respond "#{event.author.mention} #{FlickRaw.url(photo)}"
+    rescue
+      puts "Bad API response from Flickr"
+      event.respond "#{event.author.mention} #{NO_RESULT_RESPONSE}"
+    end
   end
 
   private
