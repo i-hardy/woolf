@@ -62,7 +62,6 @@ class Woolf
 
   @@virginia.message(contains: "!sprinting") do |event|
     Woolf.server_finder(event.server).get_sprinters(event)
-    event.respond "#{event.author.mention} so to work, even in poverty and obscurity, is worth while"
   end
 
   @@virginia.message(contains: "!sprint role") do |event|
