@@ -44,7 +44,12 @@ class Woolf
 
   @@virginia.ready do |startup|
     @@virginia.servers.values.each do |server|
-      Woolf.woolf_server_creator(server)
+      begin
+        Woolf.woolf_server_creator(server)
+      rescue Exception => e 
+        puts "#{e.message} in #{server.name}"
+        next
+      end
     end
   end
 
