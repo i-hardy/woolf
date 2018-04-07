@@ -1,100 +1,121 @@
-require "dinosaurus"
-require "discordrb"
-require "flickraw"
-require_relative "woolf_server"
+# frozen_string_literal: true
 
+require 'discordrb'
+require 'yaml'
+require_relative 'config'
+require_relative 'woolf_server'
+
+# Core bot class
 class Woolf
   SPRINT_REGEX = /!sprint in (\d+) for (\d+)/ unless const_defined?(:SPRINT_REGEX)
   SYN_REGEX = /!synonym\s([a-zA-Z]*\b+)/ unless const_defined?(:SYN_REGEX)
   ANT_REGEX = /!antonym\s([a-zA-Z]*\b+)/ unless const_defined?(:ANT_REGEX)
+  MESSAGES = {
+    SPRINT_REGEX => :writing_sprint,
+    '!sprinting' => :get_sprinters,
+    '!sprint role' => :permasprinters,
+    '!remove sprint role' => :tired_sprinters,
+    '!synonym' => :get_synonym,
+    '!antonym' => :get_antonym,
+    '!inspiration' => :inspire,
+  }.freeze
+  responses = YAML.load_file('set_responses.yaml')
+  COMMANDS_LIST = responses['command_list']
+  ERROR_MESSAGE = responses['error_response']
 
-  FlickRaw.api_key = ENV["FLICKR_API_KEY"]
-  FlickRaw.shared_secret = ENV["FLICKR_SECRET"]
-
-  Dinosaurus.configure do |config|
-    config.api_key = ENV["BHTHESAURUS_API_KEY"]
-  end
-
-  @@virginia = Discordrb::Bot.new token: ENV["WOOLF_BOT_TOKEN"],
-  client_id: ENV["WOOLF_CLIENT_ID"], name: "woolf"
-
-  $stdout.sync = true
-
-  def self.commands_list
-    "There is no gate, no lock, no bolt that you can set upon the freedom of my mind: \n
-              - To set up a writing sprint for y minutes in x minutes' time, type \"!sprint in x for y\"\n
-              - To opt-in to a sprint that's running, type \"!sprinting\" \n
-              - To be notified of every sprint, type \"!sprint role\" \n
-              - To stop being notified of every sprint, type \"!remove sprint role\" \n
-              - To get synonyms for a word, type \"!synonym [word]\" \n
-              - To get antonyms for a word, type \"!antonym [word]\" \n
-              - To get an interesting photo for inspiration, type \"!inspiration\""
-  end
-
-  def self.server_finder(server)
-    @connected_servers.find { |woolf_server| woolf_server.server == server }
-  end
-
-  def self.woolf_server_creator(server)
-    @connected_servers ||= []
-    unless @connected_servers.any? { |woolf_server| woolf_server.server == server }
-      @connected_servers << WoolfServer.new(server)
+  def self.startup
+    woolf = new
+    trap('TERM') do
+      woolf.stop_gracefully
+      exit
     end
+    woolf.run
   end
 
-  @@virginia.ready do |startup|
-    @@virginia.servers.values.each do |server|
-      begin
-        Woolf.woolf_server_creator(server)
-      rescue Exception => e 
-        puts "#{e.message} in #{server.name}"
-        next
+  def initialize(bot_class: Discordrb::Bot)
+    @connected_servers = []
+    @virginia = bot_class.new(token: ENV['WOOLF_BOT_TOKEN'],
+                              client_id: ENV['WOOLF_CLIENT_ID'],
+                              name: 'woolf')
+    set_events
+  end
+
+  def set_events
+    on_ready
+    on_create
+    on_mention
+  end
+
+  def run
+    virginia.run
+  end
+
+  def stop_gracefully
+    virginia.stop(true)
+  end
+
+  def server_finder(server)
+    connected_servers.find { |wserver| wserver.server == server }
+  end
+
+  def woolf_server_creator(server)
+    return if connected_servers.any? { |wserver| wserver.server == server }
+    connected_servers << WoolfServer.new(server)
+    connected_servers.last.set_sprinting_role
+  end
+
+  def error_response(event)
+    event.respond ERROR_MESSAGE
+  end
+
+  def woolf_catcher(method, event)
+    server_finder(event.server).method(method).call(event)
+  rescue StandardError => e
+    puts e.message
+    error_response(event)
+  end
+
+  def set_commands
+    MESSAGES.each_pair do |command, method|
+      virginia.message(contains: command) do |event|
+        woolf_catcher(method, event)
       end
     end
-    puts "#{@connected_servers.length} servers connected"
   end
 
-  @@virginia.server_create do |event|
-    @@virginia.servers.values.each do |server|
-      Woolf.woolf_server_creator(server)
+  def server_rescue(server)
+    woolf_server_creator(server)
+  rescue StandardError => e
+    puts "#{e.message} in #{server.name}"
+  end
+
+  def on_ready
+    virginia.ready do
+      virginia.servers.each_value do |server|
+        server_rescue(server)
+      end
+      set_commands
+      puts "#{connected_servers.length} servers connected"
     end
   end
 
-  @@virginia.mention do |event|
-    event.respond Woolf.commands_list
+  def on_create
+    virginia.server_create do
+      virginia.servers.values.each do |server|
+        woolf_server_creator(server)
+      end
+    end
   end
 
-  @@virginia.message(contains: SPRINT_REGEX ) do |event|
-    Woolf.server_finder(event.server).writing_sprint(event)
+  def on_mention
+    virginia.mention do |event|
+      event.respond COMMANDS_LIST
+    end
   end
 
-  @@virginia.message(contains: "!sprinting") do |event|
-    Woolf.server_finder(event.server).get_sprinters(event)
-  end
+  private
 
-  @@virginia.message(contains: "!sprint role") do |event|
-    Woolf.server_finder(event.server).permasprinters(event.author)
-    event.respond "#{event.author.mention}, we have the habit of freedom and the courage to write exactly what we think"
-  end
+  attr_reader :virginia, :connected_servers
 
-  @@virginia.message(contains: "!remove sprint role") do |event|
-    Woolf.server_finder(event.server).tired_sprinters(event.author)
-    event.respond "#{event.author.mention} died young — alas, she never wrote a word..."
-  end
-
-  @@virginia.message(contains: "!synonym") do |event|
-    Woolf.server_finder(event.server).get_synonym(event)
-  end
-
-  @@virginia.message(contains: "!antonym") do |event|
-    Woolf.server_finder(event.server).get_antonym(event)
-  end
-
-  @@virginia.message(contains: "!inspiration") do |event|
-    Woolf.server_finder(event.server).inspire(event)
-  end
-
-  if __FILE__ == $0
-    @@virginia.run
-  end
+  Woolf.startup if $PROGRAM_NAME == __FILE__
 end

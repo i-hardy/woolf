@@ -1,0 +1,9 @@
+command_list: "There is no gate, no lock, no bolt that you can set upon the freedom of my mind:\n
+              - To set up a writing sprint for y minutes in x minutes' time, type '!sprint in x for y'\n
+              - To opt-in to a sprint that's running, type '!sprinting'\n
+              - To be notified of every sprint, type '!sprint role'\n
+              - To stop being notified of every sprint, type '!remove sprint role'\n
+              - To get synonyms for a word, type '!synonym [word]'\n
+              - To get antonyms for a word, type '!antonym [word]'\n
+              - To get an interesting photo for inspiration, type '!inspiration'"
+error_response: "One cannot think well, love well, sleep well, if one has not dined well... and I have not dined well"

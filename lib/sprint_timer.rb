@@ -1,5 +1,7 @@
-require "discordrb"
-require_relative "user_list"
+# frozen_string_literal: true
+
+require 'discordrb'
+require_relative 'user_list'
 
 # This creates a timer object for a 'writing sprint', in which users attempt to
 # write as much as possible in a given time.
@@ -50,13 +52,11 @@ class SprintTimer
   end
 
   def minutes_plural
-    startin == 1 ? "minute" : "minutes"
+    startin == 1 ? 'minute' : 'minutes'
   end
 
   def start_and_duration
-    if event
-      @times = event.message.content.match(Woolf::SPRINT_REGEX).captures
-    end
+    @times = event.message.content.match(Woolf::SPRINT_REGEX).captures if event
   end
 
   def startin

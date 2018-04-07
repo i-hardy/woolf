@@ -1,7 +1,9 @@
-require "discordrb"
+# frozen_string_literal: true
 
-# This stores the sprinting role and any users opting in to a sprint, and allows them to be mentioned
-# individually
+require 'discordrb'
+
+# This stores the sprinting role and any users opting in to a sprint,
+# and allows them to be mentioned individually
 class UserList
   attr_reader :list
 
@@ -14,6 +16,6 @@ class UserList
   end
 
   def user_mentions
-    list.map{ |user| user.mention }.join(" ")
+    list.map(&:mention).join(' ')
   end
 end

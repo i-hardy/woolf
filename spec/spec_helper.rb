@@ -1,7 +1,9 @@
-require "simplecov"
+# frozen_string_literal: true
+
+require 'simplecov'
 SimpleCov.start
 
-require "discordrb"
+require 'discordrb'
 
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 RSpec.configure do |config|
@@ -14,5 +16,8 @@ RSpec.configure do |config|
   end
 
   config.shared_context_metadata_behavior = :apply_to_host_groups
+end
 
+def suppress_log_output
+  allow(STDOUT).to receive(:puts) # this disables puts
 end
