@@ -14,7 +14,7 @@ A Discord bot for writers, primarily intended for use during [NaNoWriMo](https:/
 
 ### Usage
 
-Click on the link at the top of the README to invite the bot to your server.
+Click on the link at the top of the README to invite the bot to your server. Please note that the writing sprint functionality *will not work* unless the bot has permission to manage roles on your server. Please see Discord's [Role Management 101](https://support.discordapp.com/hc/en-us/articles/214836687-Role-Management-101).
 
 To host the bot yourself, you will need the following environment variables:
 
@@ -30,5 +30,6 @@ then do
 ```
 $ git clone git@github.com:i-hardy/woolf.git
 $ cd woolf
+$ bundle install
 $ ruby lib/woolf.rb
 ```
