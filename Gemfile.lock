@@ -1,15 +1,16 @@
 GIT
   remote: git://github.com/meew0/discordrb.git
-  revision: 50379e92b82f3e7bbd0425276e9ea65fd9cb47ce
+  revision: 73c3f7355af103478e31bda968bfcb1f56b5a536
+  branch: master
   specs:
     discordrb (3.2.1)
       discordrb-webhooks (~> 3.2.0.1)
       opus-ruby
       rbnacl (~> 3.4.0)
-      rest-client
+      rest-client (>= 2.1.0.rc1)
       websocket-client-simple (>= 0.3.0)
     discordrb-webhooks (3.2.0.1)
-      rest-client
+      rest-client (>= 2.1.0.rc1)
 
 GEM
   remote: https://rubygems.org/
@@ -29,8 +30,9 @@ GEM
     domain_name (0.5.20170404)
       unf (>= 0.0.5, < 1.0.0)
     event_emitter (0.2.6)
-    ffi (1.9.18)
+    ffi (1.9.23)
     flickraw (0.9.9)
+    http-accept (1.7.0)
     http-cookie (1.0.3)
       domain_name (~> 0.5)
     httparty (0.15.6)
@@ -49,7 +51,8 @@ GEM
     rbnacl (3.4.0)
       ffi
     redis (4.0.1)
-    rest-client (2.0.2)
+    rest-client (2.1.0.rc1)
+      http-accept (>= 1.7.0, < 2.0)
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 4.0)
       netrc (~> 0.8)
@@ -76,8 +79,8 @@ GEM
       thread_safe (~> 0.1)
     unf (0.1.4)
       unf_ext
-    unf_ext (0.0.7.4)
-    websocket (1.2.4)
+    unf_ext (0.0.7.5)
+    websocket (1.2.5)
     websocket-client-simple (0.3.0)
       event_emitter
       websocket

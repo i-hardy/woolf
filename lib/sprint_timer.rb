@@ -3,16 +3,16 @@
 require 'discordrb'
 require 'json'
 require_relative 'user_list'
-require_relative 'storage'
+# require_relative 'storage'
 
 # This creates a timer object for a 'writing sprint', in which users attempt to
 # write as much as possible in a given time.
 class SprintTimer
   attr_reader :userlist
 
-  def initialize(event, userlist_class: UserList, store_class: Storage)
-    return unless event
-    @store = store_class.new(event.server.name)
+  def initialize(event, userlist_class: UserList)
+    # return unless event
+    # @store = store_class.new(event.server.name)
     @event = event
     @userlist = userlist_class.new
     start_and_duration

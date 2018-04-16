@@ -4,7 +4,7 @@ ruby '2.4.1'
 source 'https://rubygems.org'
 
 gem 'dinosaurus'
-gem 'discordrb', github: 'meew0/discordrb'
+gem 'discordrb', github: 'meew0/discordrb', :branch => 'master'
 gem 'flickraw'
 gem 'redis'
 
