@@ -85,7 +85,7 @@ class Woolf
   def server_rescue(server)
     woolf_server_creator(server)
   rescue Discordrb::Errors::NoPermission => err
-    puts err.response
+    puts err._rc_response
   rescue StandardError => e
     puts e
     puts "#{e.message} in #{server.name}"
