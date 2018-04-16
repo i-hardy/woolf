@@ -3,7 +3,7 @@
 require 'redis'
 
 # This class handles the saving and loading of data from Redis
-class StorageManager
+class Storage
   def initialize(server_name, storage_class: Redis)
     @store = storage_class.new
     @server_name = server_name

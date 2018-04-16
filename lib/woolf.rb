@@ -21,7 +21,6 @@ class Woolf
     '!set sprint role' => :set_sprinting_role,
     '!woolf support' => :get_support,
   }.freeze
-  CORE_RESPONSES = YAML.load_file('set_responses.yaml')
 
   def self.startup
     woolf = new

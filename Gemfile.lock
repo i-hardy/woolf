@@ -48,6 +48,7 @@ GEM
     rake (12.1.0)
     rbnacl (3.4.0)
       ffi
+    redis (4.0.1)
     rest-client (2.0.2)
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 4.0)
@@ -88,6 +89,7 @@ DEPENDENCIES
   dinosaurus
   discordrb!
   flickraw
+  redis
   rspec
   simplecov
 
@@ -95,4 +97,4 @@ RUBY VERSION
    ruby 2.4.1p111
 
 BUNDLED WITH
-   1.15.4
+   1.16.1
