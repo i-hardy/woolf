@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'discordrb'
+require 'json'
 require_relative 'user_list'
 
 # This creates a timer object for a 'writing sprint', in which users attempt to
@@ -25,6 +26,7 @@ class SprintTimer
   end
 
   def sprint_starter
+    @start_point = Time.now
     event.respond "#{userlist.user_mentions} #{length} minute sprint starts now!"
     sprint
   end
@@ -42,9 +44,17 @@ class SprintTimer
     !!ended
   end
 
+  def to_json
+    {
+      users: userlist.user_names,
+      start: start_point,
+      duration: length
+    }.to_json
+  end
+
   private
 
-  attr_reader :times, :event, :ended
+  attr_reader :times, :event, :ended, :start_point
 
   def sprint
     sleep 60 * length

@@ -18,10 +18,10 @@ class Woolf
     '!synonym' => :get_synonym,
     '!antonym' => :get_antonym,
     '!inspiration' => :inspire,
+    '!set sprint role' => :set_sprinting_role,
+    '!woolf support' => :get_support,
   }.freeze
-  responses = YAML.load_file('set_responses.yaml')
-  COMMANDS_LIST = responses['command_list']
-  ERROR_MESSAGE = responses['error_response']
+  CORE_RESPONSES = YAML.load_file('set_responses.yaml')
 
   def self.startup
     woolf = new
@@ -65,7 +65,7 @@ class Woolf
   end
 
   def error_response(event)
-    event.respond ERROR_MESSAGE
+    event.respond Responses::CORE_RESPONSES['error_response']
   end
 
   def woolf_catcher(method, event)
@@ -109,7 +109,7 @@ class Woolf
 
   def on_mention
     virginia.mention do |event|
-      event.respond COMMANDS_LIST
+      event.respond Responses::CORE_RESPONSES['command_list']
     end
   end
 
