@@ -87,6 +87,7 @@ class Woolf
   rescue Discordrb::Errors::NoPermission => err
     puts err.response
   rescue StandardError => e
+    puts e
     puts "#{e.message} in #{server.name}"
   end
 
