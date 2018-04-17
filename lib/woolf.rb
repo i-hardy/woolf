@@ -103,7 +103,7 @@ class Woolf
 
   def on_create
     virginia.server_create do
-      virginia.servers.values.each do |server|
+      virginia.servers.each_value do |server|
         woolf_server_creator(server)
       end
     end

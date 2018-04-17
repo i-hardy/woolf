@@ -21,12 +21,12 @@ class WoolfServer
   end
 
   def set_sprinting_role
-    retries ||= 0
+    # retries ||= 0
     role_getter
   rescue Discordrb::Errors::NoPermission => e
-    sleep 0.5
-    retries += 1
-    retry unless retries > 3
+    # sleep 0.5
+    # retries += 1
+    # retry unless retries > 3
     puts e._rc_response
     # @server
     #   .default_channel
