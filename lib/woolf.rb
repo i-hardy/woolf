@@ -98,6 +98,7 @@ class Woolf
       end
       set_commands
       puts "#{connected_servers.length} servers connected"
+      connected_servers.each { |wserver| p wserver.server.name }
     end
   end
 

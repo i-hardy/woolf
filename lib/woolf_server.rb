@@ -8,7 +8,7 @@ require_relative 'sprint_timer'
 class WoolfServer
   include Responses
 
-  ROLE_NAME = 'sprinters'.freeze
+  ROLE_NAME = 'sprinters'
   ROLE_BY_NAME = proc { |role| role.name == ROLE_NAME }
 
   attr_reader :server
@@ -21,16 +21,12 @@ class WoolfServer
   end
 
   def set_sprinting_role
-    # retries ||= 0
     role_getter
-  rescue Discordrb::Errors::NoPermission => e
-    # sleep 0.5
-    # retries += 1
-    # retry unless retries > 3
-    puts e._rc_response
+  rescue StandardError
     # @server
     #   .default_channel
     #   .send_message Responses::CORE_RESPONSES['permissions_error']
+    raise
   end
 
   def writing_sprint(event)
@@ -39,7 +35,7 @@ class WoolfServer
     timer.set_start
   rescue StandardError => e
     puts "#{e.message} raised in #{@server.name}"
-    event.respond 'A sprint is already running'
+    # event.respond 'A sprint is already running'
   end
 
   def get_sprinters(event)
@@ -48,7 +44,7 @@ class WoolfServer
     respond(event, 'join_sprint')
   rescue StandardError => e
     puts "#{e.message} raised in #{@server.name}"
-    event.respond 'No sprint is running'
+    # event.respond 'No sprint is running'
   end
 
   def permasprinters(event)
