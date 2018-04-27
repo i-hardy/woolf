@@ -50,6 +50,7 @@ class Woolf
   end
 
   def stop_gracefully
+    puts 'Shutting down gracefully...'
     virginia.stop(true)
   end
 
@@ -71,12 +72,12 @@ class Woolf
     server_finder(event.server).method(method).call(event)
   rescue StandardError => e
     puts e.message
-    error_response(event)
+    # error_response(event)
   end
 
   def set_commands
     MESSAGES.each_pair do |command, method|
-      virginia.message(contains: command) do |event|
+      virginia.message(content: command) do |event|
         woolf_catcher(method, event)
       end
     end
@@ -98,7 +99,6 @@ class Woolf
       end
       set_commands
       puts "#{connected_servers.length} servers connected"
-      connected_servers.each { |wserver| p wserver.server.name }
     end
   end
 

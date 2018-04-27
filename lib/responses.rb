@@ -43,7 +43,8 @@ module Responses
     event.respond CORE_RESPONSES['support_request']
   end
 
-  def respond(event, type)
+  def woolf_respond(event, type)
+    puts caller
     event.respond "#{event.author.mention}#{CORE_RESPONSES[type]}"
   end
 

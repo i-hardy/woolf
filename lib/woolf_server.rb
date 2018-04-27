@@ -41,7 +41,7 @@ class WoolfServer
   def get_sprinters(event)
     raise 'No sprint is running' if no_sprint?
     timer.add_sprinters(event.author)
-    respond(event, 'join_sprint')
+    woolf_respond(event, 'join_sprint')
   rescue StandardError => e
     puts "#{e.message} raised in #{@server.name}"
     # event.respond 'No sprint is running'
@@ -49,12 +49,12 @@ class WoolfServer
 
   def permasprinters(event)
     event.author.add_role(sprinting_role)
-    respond(event, 'add_role')
+    woolf_respond(event, 'add_role')
   end
 
   def tired_sprinters(event)
     event.author.remove_role(sprinting_role)
-    respond(event, 'remove_role')
+    woolf_respond(event, 'remove_role')
   end
 
   private
