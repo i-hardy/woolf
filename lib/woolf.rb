@@ -33,7 +33,8 @@ class Woolf
 
   def initialize(bot_class: Discordrb::Bot)
     @connected_servers = []
-    @virginia = bot_class.new(token: ENV['WOOLF_BOT_TOKEN'],
+    @virginia = bot_class.new(log_mode: :debug,
+                              token: ENV['WOOLF_BOT_TOKEN'],
                               client_id: ENV['WOOLF_CLIENT_ID'],
                               name: 'woolf',
                               ignore_bots: true)
@@ -80,7 +81,7 @@ class Woolf
   def set_commands
     puts 'Commands set'
     MESSAGES.each_pair do |command, method|
-      virginia.message(content: command) do |event|
+      virginia.message(contains: command) do |event|
         puts "#{event.message.content}, #{event.server.name}"
         woolf_catcher(method, event)
       end
