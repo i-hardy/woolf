@@ -33,7 +33,7 @@ class Woolf
 
   def initialize(bot_class: Discordrb::Bot)
     @connected_servers = []
-    @virginia = bot_class.new(log_mode: :debug,
+    @virginia = bot_class.new(log_mode: :verbose,
                               token: ENV['WOOLF_BOT_TOKEN'],
                               client_id: ENV['WOOLF_CLIENT_ID'],
                               name: 'woolf',
