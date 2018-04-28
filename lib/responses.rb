@@ -44,7 +44,6 @@ module Responses
   end
 
   def woolf_respond(event, type)
-    puts caller
     event.respond "#{event.author.mention}#{CORE_RESPONSES[type]}"
   end
 

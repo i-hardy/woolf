@@ -35,7 +35,8 @@ class Woolf
     @connected_servers = []
     @virginia = bot_class.new(token: ENV['WOOLF_BOT_TOKEN'],
                               client_id: ENV['WOOLF_CLIENT_ID'],
-                              name: 'woolf')
+                              name: 'woolf',
+                              ignore_bots: true)
     set_events
   end
 
@@ -43,6 +44,7 @@ class Woolf
     on_ready
     on_create
     on_mention
+    set_commands
   end
 
   def run
@@ -76,8 +78,10 @@ class Woolf
   end
 
   def set_commands
+    puts 'Commands set'
     MESSAGES.each_pair do |command, method|
       virginia.message(content: command) do |event|
+        puts "#{event.message.content}, #{event.server.name}"
         woolf_catcher(method, event)
       end
     end
@@ -97,7 +101,6 @@ class Woolf
       virginia.servers.each_value do |server|
         server_rescue(server)
       end
-      set_commands
       puts "#{connected_servers.length} servers connected"
     end
   end
