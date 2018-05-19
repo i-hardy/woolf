@@ -1,7 +1,7 @@
 GIT
-  remote: git://github.com/meew0/discordrb.git
-  revision: 73c3f7355af103478e31bda968bfcb1f56b5a536
-  branch: master
+  remote: https://github.com/meew0/discordrb.git
+  revision: 4a3f975846bdefaa0a3bd863546f31c3315dde37
+  ref: 4a3f975846bd
   specs:
     discordrb (3.2.1)
       discordrb-webhooks (~> 3.2.0.1)
@@ -27,7 +27,7 @@ GEM
       httparty
       rake
     docile (1.1.5)
-    domain_name (0.5.20170404)
+    domain_name (0.5.20180417)
       unf (>= 0.0.5, < 1.0.0)
     event_emitter (0.2.6)
     ffi (1.9.23)
