@@ -12,6 +12,7 @@ class UserList
   end
 
   def get_users_sprinting(user)
+    raise 'Nil value passed to userlist' unless user
     list << user
   end
 

@@ -11,9 +11,9 @@ class SprintTimer
   attr_reader :userlist
 
   def initialize(event, userlist_class: UserList)
-    # return unless event
     # @store = store_class.new(event.server.name)
     @event = event
+    @owner = event&.message&.author
     @userlist = userlist_class.new
     start_and_duration
   end
@@ -26,21 +26,31 @@ class SprintTimer
     event.respond "Get ready to sprint in #{startin} #{minutes_plural}"
     sleep 60 * startin
     sprint_starter
+  rescue StandardError
+    end_sprint
   end
 
   def sprint_starter
+    return if ended?
     @start_point = Time.now
     event.respond "#{userlist.user_mentions} #{length} minute sprint starts now!"
     sprint
   end
 
   def sprint_ender
+    return if ended?
     event.respond "#{userlist.user_mentions} Stop sprinting!"
     end_sprint
   end
 
   def end_sprint
     @ended = true
+  end
+
+  def cancel(canceller)
+    raise 'User cannot cancel this sprint' unless can_cancel?(canceller)
+    end_sprint
+    event.respond 'Sprint cancelled'
   end
 
   def ended?
@@ -57,9 +67,10 @@ class SprintTimer
 
   private
 
-  attr_reader :times, :event, :ended, :start_point
+  attr_reader :owner, :times, :event, :ended, :start_point
 
   def sprint
+    return if ended?
     sleep 60 * length
     sprint_ender
   end
@@ -70,6 +81,10 @@ class SprintTimer
 
   def start_and_duration
     @times = event.message.content.match(Woolf::SPRINT_REGEX).captures if event
+  end
+
+  def can_cancel?(canceller)
+    canceller == owner || canceller.permission?(:manage_messages)
   end
 
   def startin

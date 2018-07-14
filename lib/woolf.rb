@@ -13,6 +13,7 @@ class Woolf
   MESSAGES = {
     SPRINT_REGEX => :writing_sprint,
     '!sprinting' => :get_sprinters,
+    '!cancel sprint' => :cancel_sprint,
     '!sprint role' => :permasprinters,
     '!remove sprint role' => :tired_sprinters,
     '!synonym' => :get_synonym,
@@ -78,13 +79,13 @@ class Woolf
   end
 
   def set_commands
-    puts 'Commands set'
     MESSAGES.each_pair do |command, method|
       virginia.message(contains: command) do |event|
         puts "#{event.message.content}, #{event.server.name}"
         woolf_catcher(method, event)
       end
     end
+    puts 'Commands set'
   end
 
   def server_rescue(server)
@@ -92,8 +93,8 @@ class Woolf
   rescue Discordrb::Errors::NoPermission => err
     puts err._rc_response
   rescue StandardError => e
-    puts e
     puts "#{e.message} in #{server.name}"
+    puts e.backtrace
   end
 
   def on_ready
