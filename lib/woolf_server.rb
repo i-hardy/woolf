@@ -84,7 +84,8 @@ class WoolfServer
     @timer = timer_class.new(event)
     set_sprinting_role unless sprinting_role
     timer.add_sprinters(sprinting_role)
-  rescue
+  rescue StandardError => e
     puts "#{e.message} raised in #{@server.name} while setting up a sprint"
+    timer.end_sprint
   end
 end
