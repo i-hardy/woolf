@@ -50,7 +50,7 @@ class SprintTimer
   def cancel(canceller)
     raise 'User cannot cancel this sprint' unless can_cancel?(canceller)
     end_sprint
-    event.respond 'Sprint cancelled'
+    event.respond Responses::CORE_RESPONSES['cancel_sprint']
   end
 
   def ended?
@@ -80,7 +80,7 @@ class SprintTimer
   end
 
   def start_and_duration
-    @times = event.message.content.match(Woolf::SPRINT_REGEX).captures if event
+    @times = event.message.content.match(Woolf::Regexes::SPRINT).captures if event
   end
 
   def can_cancel?(canceller)

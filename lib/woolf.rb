@@ -1,27 +1,33 @@
 # frozen_string_literal: true
-
+require 'logger'
 require 'discordrb'
 require 'yaml'
 require_relative 'config'
+require_relative 'regexes'
 require_relative 'woolf_server'
 
 # Core bot class
 class Woolf
-  SPRINT_REGEX = /!sprint in (\d+) for (\d+)/ unless const_defined?(:SPRINT_REGEX)
-  SYN_REGEX = /!synonym\s([a-zA-Z]*\b+)/ unless const_defined?(:SYN_REGEX)
-  ANT_REGEX = /!antonym\s([a-zA-Z]*\b+)/ unless const_defined?(:ANT_REGEX)
   MESSAGES = {
-    SPRINT_REGEX => :writing_sprint,
+    Regexes::SPRINT => :writing_sprint,
     '!sprinting' => :get_sprinters,
     '!cancel sprint' => :cancel_sprint,
     '!sprint role' => :permasprinters,
     '!remove sprint role' => :tired_sprinters,
     '!synonym' => :get_synonym,
     '!antonym' => :get_antonym,
+    '!rhyme' => :get_rhyme,
+    '!wordsnear' => :get_triggers,
     '!inspiration' => :inspire,
     '!set sprint role' => :set_sprinting_role,
     '!woolf support' => :get_support,
   }.freeze
+  LOGGER = Logger.new(STDOUT, 
+    level: Logger::INFO,
+    datetime_format: '%Y-%m-%d %H:%M:%S',
+    formatter: proc {|severity, datetime, progname, msg|
+      "#{datetime} #{severity}: #{msg}\n"
+    })
 
   def self.startup
     woolf = new
@@ -53,7 +59,7 @@ class Woolf
   end
 
   def stop_gracefully
-    puts 'Shutting down gracefully...'
+    LOGGER.info('Shutting down gracefully...')
     virginia.stop(true)
   end
 
@@ -67,33 +73,28 @@ class Woolf
     connected_servers.last.set_sprinting_role
   end
 
-  def error_response(event)
-    event.respond Responses::CORE_RESPONSES['error_response']
-  end
-
   def woolf_catcher(method, event)
     server_finder(event.server).method(method).call(event)
   rescue StandardError => e
-    puts e.message
-    # error_response(event)
+    LOGGER.error(e.message)
   end
 
   def set_commands
     MESSAGES.each_pair do |command, method|
       virginia.message(contains: command) do |event|
-        puts "#{event.message.content}, #{event.server.name}"
+        LOGGER.info("#{event.message.content}, #{event.server.name}")
         woolf_catcher(method, event)
       end
     end
-    puts 'Commands set'
+    LOGGER.info('Commands set')
   end
 
   def server_rescue(server)
     woolf_server_creator(server)
   rescue Discordrb::Errors::NoPermission => err
-    puts "#{err._rc_response} in #{server.name}"
+    LOGGER.error("#{err._rc_response} in #{server.name}")
   rescue StandardError => e
-    puts "#{e.message} in #{server.name}"
+    LOGGER.error("#{e.message} in #{server.name}")
     puts e.backtrace
   end
 
@@ -102,7 +103,7 @@ class Woolf
       virginia.servers.each_value do |server|
         server_rescue(server)
       end
-      puts "#{connected_servers.length} servers connected"
+      LOGGER.info("#{connected_servers.length} servers connected")
     end
   end
 

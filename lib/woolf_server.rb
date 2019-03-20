@@ -34,14 +34,14 @@ class WoolfServer
     sprint_init(event)
     timer.set_start
   rescue StandardError => e
-    puts "#{e.message} raised in #{@server.name}"
+    Woolf::LOGGER.error("#{e.message} raised in #{@server.name}")
   end
 
   def cancel_sprint(event)
     raise 'No sprint is running' if no_sprint?
     timer.cancel(event.author)
   rescue StandardError => e
-    puts "#{e.message} raised in #{@server.name}"
+    Woolf::LOGGER.error("#{e.message} raised in #{@server.name}")
   end
 
   def get_sprinters(event)
@@ -49,7 +49,7 @@ class WoolfServer
     timer.add_sprinters(event.author)
     woolf_respond(event, 'join_sprint')
   rescue StandardError => e
-    puts "#{e.message} raised in #{@server.name}"
+    Woolf::LOGGER.error("#{e.message} raised in #{@server.name}")
   end
 
   def permasprinters(event)
@@ -85,7 +85,7 @@ class WoolfServer
     set_sprinting_role unless sprinting_role
     timer.add_sprinters(sprinting_role)
   rescue StandardError => e
-    puts "#{e.message} raised in #{@server.name} while setting up a sprint"
+    Woolf::LOGGER.error("#{e.message} raised in #{@server.name} while setting up a sprint")
     timer.end_sprint
   end
 end
