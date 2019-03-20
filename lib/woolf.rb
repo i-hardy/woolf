@@ -20,7 +20,7 @@ class Woolf
     '!wordsnear' => :get_triggers,
     '!inspiration' => :inspire,
     '!set sprint role' => :set_sprinting_role,
-    '!woolf support' => :get_support,
+    '!woolf support' => :support,
   }.freeze
   LOGGER = Logger.new(STDOUT, 
     level: Logger::INFO,
@@ -74,7 +74,7 @@ class Woolf
   end
 
   def woolf_catcher(method, event)
-    server_finder(event.server).method(method).call(event)
+    server_finder(event.server).send(method, event)
   rescue StandardError => e
     LOGGER.error(e.message)
   end

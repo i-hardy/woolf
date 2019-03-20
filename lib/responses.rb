@@ -8,36 +8,12 @@ module Responses
   CORE_RESPONSES = YAML.load_file('responses.yaml')
   NO_RESULT_RESPONSE = CORE_RESPONSES['no_result_response']
   DATAMUSE_API = "https://api.datamuse.com/words".freeze
-
-  ARRAY_RESPONSE = proc { |array| array.empty? ? NO_RESULT_RESPONSE : array.map {|w| w["word"]}.join(', ') }
-
-  DATAMUSE_REQUEST = proc do |regex, query, event|
-    word = event.message.content.match(regex).captures.last
-    res = HTTParty.get("#{DATAMUSE_API}?#{query}=#{word}")
-    ARRAY_RESPONSE.call(res)
-  rescue HTTParty::ResponseError
-    Woolf::LOGGER.error("Error accessing Datamuse API")
-    NO_RESULT_RESPONSE
-  rescue StandardError
-    Woolf::LOGGER.error("Searchable word not found in #{event.message.content}")
-    NO_RESULT_RESPONSE
-  end
-
-  def get_synonym(event)
-    event.respond "#{event.author.mention} #{DATAMUSE_REQUEST.call(Woolf::Regexes::SYN, 'rel_syn', event)}"
-  end
-
-  def get_antonym(event)
-    event.respond "#{event.author.mention} #{DATAMUSE_REQUEST.call(Woolf::Regexes::ANT, 'rel_ant', event)}"
-  end
-
-  def get_rhyme(event)
-    event.respond "#{event.author.mention} #{DATAMUSE_REQUEST.call(Woolf::Regexes::RHYME, 'rel_rhy', event)}"
-  end
-
-  def get_triggers(event)
-    event.respond "#{event.author.mention} #{DATAMUSE_REQUEST.call(Woolf::Regexes::TRIGGER, 'rel_trg', event)}"
-  end
+  DATAMUSE_ARGS = {
+    synonym: [Woolf::Regexes::SYN, 'rel_syn'],
+    antonym: [Woolf::Regexes::ANT, 'rel_ant'],
+    rhyme: [Woolf::Regexes::RHYME, 'rel_rhy'],
+    trigger: [Woolf::Regexes::TRIGGER, 'rel_trg']
+  }
 
   def inspire(event)
     photo = flickr.interestingness.getList.to_a.sample
@@ -47,7 +23,7 @@ module Responses
     event.respond "#{event.author.mention} #{NO_RESULT_RESPONSE}"
   end
 
-  def get_support(event)
+  def support(event)
     event.respond CORE_RESPONSES['support_request']
   end
 
@@ -55,9 +31,28 @@ module Responses
     event.respond "#{event.author.mention}#{CORE_RESPONSES[type]}"
   end
 
+  def method_missing(name, *args)
+    raise NoMethodError unless name.match?('get_')
+    event = args.first
+    relation = name.to_s.split('_').last.to_sym
+    event.respond "#{event.author.mention} #{datamuse_request(event, *DATAMUSE_ARGS[relation])}"
+  end
+
   private
 
   def array_response(array)
     array.empty? ? NO_RESULT_RESPONSE : array.map {|w| w["word"]}.join(', ')
+  end
+
+  def datamuse_request(event, regex, query)
+    word = event.message.content.match(regex).captures.last
+    res = HTTParty.get("#{DATAMUSE_API}?#{query}=#{word}")
+    array_response(res)
+  rescue HTTParty::ResponseError
+    Woolf::LOGGER.error("Error accessing Datamuse API")
+    NO_RESULT_RESPONSE
+  rescue StandardError
+    Woolf::LOGGER.error("Searchable word not found in #{event.message.content}")
+    NO_RESULT_RESPONSE
   end
 end

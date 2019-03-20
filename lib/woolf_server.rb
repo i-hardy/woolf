@@ -22,11 +22,6 @@ class WoolfServer
 
   def set_sprinting_role
     role_getter
-  rescue StandardError
-    # @server
-    #   .default_channel
-    #   .send_message Responses::CORE_RESPONSES['permissions_error']
-    raise
   end
 
   def writing_sprint(event)
