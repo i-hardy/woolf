@@ -6,19 +6,19 @@
 
 A Discord bot for writers, primarily intended for use during [NaNoWriMo](https://nanowrimo.org/).
 
-### Features
+## Features
 
 - Custom-length timers for writing sprints
 - Fetches synonyms and antonyms using [Dinosaurus](https://github.com/dtuite/dinosaurus)
 - Fetches inspirational photos using [Flickraw](https://github.com/hanklords/flickraw)
 
-### Usage
+## Usage
 
 Click on the link at the top of the README to invite the bot to your server. Please note that the writing sprint functionality _will not work_ unless the bot has permission to manage roles on your server. Please see Discord's [Role Management 101](https://support.discordapp.com/hc/en-us/articles/214836687-Role-Management-101).
 
 To host the bot yourself, you will need the following environment variables:
 
-```
+```bash
 WOOLF_BOT_TOKEN=[your Discord bot token]
 WOOLF_CLIENT_ID=[your Discord bot client id]
 BHTHESAURUS_API_KEY=[your Big Huge Thesaurus API key]
@@ -28,11 +28,11 @@ FLICKR_SECRET=[your Flickr shared secret]
 
 then do
 
-```
-$ git clone git@github.com:i-hardy/woolf.git
-$ cd woolf
-$ bundle install
-$ ruby lib/woolf.rb
+```bash
+git clone git@github.com:i-hardy/woolf.git
+cd woolf
+bundle install
+ruby lib/woolf.rb
 ```
 
 or use the provided Dockerfile to build and run the bot in a container.
