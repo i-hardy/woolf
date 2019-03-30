@@ -3,7 +3,8 @@
 ruby '2.6.0'
 source 'https://rubygems.org'
 
-gem 'discordrb', git: 'https://github.com/meew0/discordrb.git', ref: '4a3f975846bd'
+gem 'discordrb', ">= 3.3.0"
+gem 'dotenv'
 gem 'flickraw'
 gem 'httparty'
 

@@ -5,5 +5,5 @@ RUN apk add --no-cache git alpine-sdk
 ADD . /app
 WORKDIR /app
 
-RUN bundle install
+RUN bundle install --without=test
 CMD ["bundle", "exec", "ruby", "./lib/woolf.rb"]

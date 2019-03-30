@@ -37,6 +37,10 @@ class Woolf
       woolf.stop_gracefully
       exit
     end
+    trap('INT') do
+      woolf.stop_gracefully
+      exit
+    end
     woolf.run
   end
 
