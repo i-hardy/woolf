@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 require 'logger'
 require 'discordrb'
-require 'yaml'
+
 require_relative 'config'
 require_relative 'regexes'
 require_relative 'woolf_server'
@@ -17,7 +17,9 @@ class Woolf
     '!synonym' => :get_synonym,
     '!antonym' => :get_antonym,
     '!rhyme' => :get_rhyme,
-    '!wordsnear' => :get_triggers,
+    '!wordslike' => :get_meanslike,
+    '!related' => :get_triggers,
+    '!describe' => :get_describe,
     '!inspiration' => :inspire,
     '!set sprint role' => :set_sprinting_role,
     '!woolf support' => :support,
