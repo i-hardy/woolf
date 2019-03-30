@@ -23,3 +23,10 @@ jobs:
             echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
             docker push imogenhardy/$IMAGE_NAME:$TAG
             docker push imogenhardy/$IMAGE_NAME:latest
+      - add_ssh_keys:
+          fingerprints:
+            - '7a:f2:f7:9a:6d:30:88:b3:fd:bc:3b:79:d9:74:97:a3'
+      - run:
+          name: Deploy app to Digital Ocean
+          command: |
+            ssh -o StrictHostKeyChecking=no $DROPLET "source ~/.bashrc && sh ./woolf-runner.sh"
