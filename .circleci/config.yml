@@ -4,7 +4,6 @@ jobs:
     branches:
       only:
         - master
-        - datamuse-api
     docker:
       - image: circleci/ruby:2.6.0
     steps:
