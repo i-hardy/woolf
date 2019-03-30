@@ -26,6 +26,7 @@ class WoolfServer
 
   def writing_sprint(event)
     raise 'One sprint at a time!' unless no_sprint?
+
     sprint_init(event)
     timer.set_start
   rescue StandardError => e
@@ -34,6 +35,7 @@ class WoolfServer
 
   def cancel_sprint(event)
     raise 'No sprint is running' if no_sprint?
+
     timer.cancel(event.author)
   rescue StandardError => e
     Woolf::LOGGER.error("#{e.message} raised in #{@server.name}")
@@ -41,6 +43,7 @@ class WoolfServer
 
   def get_sprinters(event)
     raise 'No sprint is running' if no_sprint?
+
     timer.add_sprinters(event.author)
     woolf_respond(event, 'join_sprint')
   rescue StandardError => e
@@ -68,6 +71,7 @@ class WoolfServer
 
   def role_creator
     return if server.roles.any?(&ROLE_BY_NAME)
+
     server.create_role(name: ROLE_NAME, colour: 7_512_794, mentionable: true)
   end
 

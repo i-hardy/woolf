@@ -8,7 +8,7 @@ module Responses
   MAX_WORDS = 40
   CORE_RESPONSES = YAML.load_file('responses.yaml')
   NO_RESULT_RESPONSE = CORE_RESPONSES['no_result_response']
-  DATAMUSE_API = "https://api.datamuse.com/words".freeze
+  DATAMUSE_API = 'https://api.datamuse.com/words'
   DATAMUSE_ARGS = {
     synonym: [Woolf::Regexes::SYN, 'rel_syn'],
     antonym: [Woolf::Regexes::ANT, 'rel_ant'],
@@ -16,7 +16,7 @@ module Responses
     meanslike: [Woolf::Regexes::MEANSLIKE, 'ml'],
     triggers: [Woolf::Regexes::TRIGGER, 'rel_trg'],
     describe: [Woolf::Regexes::DESCRIBE, 'rel_jjb']
-  }
+  }.freeze
 
   def inspire(event)
     photo = flickr.interestingness.getList.to_a.sample
@@ -35,16 +35,20 @@ module Responses
   end
 
   def method_missing(name, *args)
-    raise NoMethodError unless name.match?('get_')
+    super unless name.start_with?('get_')
     event = args.first
     relation = name.to_s.split('_').last.to_sym
     event.respond "#{event.author.mention} #{datamuse_request(event, *DATAMUSE_ARGS[relation])}"
   end
 
+  def respond_to_missing?(method_name, include_private = false)
+    method_name.to_s.start_with?('get_') || super
+  end
+
   private
 
   def array_response(array)
-    array.empty? ? NO_RESULT_RESPONSE : array.map {|w| w["word"]}.slice(0, MAX_WORDS).join(', ')
+    array.empty? ? NO_RESULT_RESPONSE : array.map { |w| w['word'] }.slice(0, MAX_WORDS).join(', ')
   end
 
   def datamuse_request(event, regex, query)
@@ -52,7 +56,7 @@ module Responses
     res = HTTParty.get("#{DATAMUSE_API}?#{query}=#{word}")
     array_response(res)
   rescue HTTParty::ResponseError
-    Woolf::LOGGER.error("Error accessing Datamuse API")
+    Woolf::LOGGER.error('Error accessing Datamuse API')
     NO_RESULT_RESPONSE
   rescue StandardError
     Woolf::LOGGER.error("Searchable word not found in #{event.message.content}")

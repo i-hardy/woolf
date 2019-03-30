@@ -3,7 +3,6 @@
 require 'discordrb'
 require 'json'
 require_relative 'user_list'
-# require_relative 'storage'
 
 # This creates a timer object for a 'writing sprint', in which users attempt to
 # write as much as possible in a given time.
@@ -32,6 +31,7 @@ class SprintTimer
 
   def sprint_starter
     return if ended?
+
     @start_point = Time.now
     event.respond "#{userlist.user_mentions} #{length} minute sprint starts now!"
     sprint
@@ -39,6 +39,7 @@ class SprintTimer
 
   def sprint_ender
     return if ended?
+
     event.respond "#{userlist.user_mentions} Stop sprinting!"
     end_sprint
   end
@@ -49,20 +50,13 @@ class SprintTimer
 
   def cancel(canceller)
     raise 'User cannot cancel this sprint' unless can_cancel?(canceller)
+
     end_sprint
     event.respond Responses::CORE_RESPONSES['cancel_sprint']
   end
 
   def ended?
-    !!ended
-  end
-
-  def to_json
-    {
-      users: userlist.user_names,
-      start: start_point,
-      duration: length
-    }.to_json
+    !ended.nil?
   end
 
   private
@@ -71,6 +65,7 @@ class SprintTimer
 
   def sprint
     return if ended?
+
     sleep 60 * length
     sprint_ender
   end

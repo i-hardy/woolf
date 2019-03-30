@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'logger'
 require 'discordrb'
 
@@ -22,14 +23,14 @@ class Woolf
     '!describe' => :get_describe,
     '!inspiration' => :inspire,
     '!set sprint role' => :set_sprinting_role,
-    '!woolf support' => :support,
+    '!woolf support' => :support
   }.freeze
-  LOGGER = Logger.new(STDOUT, 
-    level: Logger::INFO,
-    datetime_format: '%Y-%m-%d %H:%M:%S',
-    formatter: proc {|severity, datetime, progname, msg|
-      "#{datetime} #{severity}: #{msg}\n"
-    })
+  LOGGER = Logger.new(STDOUT,
+                      level: Logger::INFO,
+                      datetime_format: '%Y-%m-%d %H:%M:%S',
+                      formatter: proc { |severity, datetime, _progname, msg|
+                        "#{datetime} #{severity}: #{msg}\n"
+                      })
 
   def self.startup
     woolf = new
@@ -75,6 +76,7 @@ class Woolf
 
   def woolf_server_creator(server)
     return if connected_servers.any? { |wserver| wserver.server == server }
+
     connected_servers << WoolfServer.new(server)
     connected_servers.last.set_sprinting_role
   end
