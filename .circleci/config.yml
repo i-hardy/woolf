@@ -1,6 +1,10 @@
 version: 2
 jobs:
   build:
+    branches:
+      only:
+        - master
+        - datamuse-api
     docker:
       - image: circleci/ruby:2.6.0
     steps:
@@ -18,8 +22,4 @@ jobs:
             docker build -t imogenhardy/$IMAGE_NAME:$TAG -t imogenhardy/$IMAGE_NAME:latest .
             echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
             docker push imogenhardy/$IMAGE_NAME:$TAG
-workflows:
-  version: 2
-  build:
-    jobs:
-      - build
+            docker push imogenhardy/$IMAGE_NAME:latest
