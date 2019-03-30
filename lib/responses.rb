@@ -5,6 +5,7 @@ require 'httparty'
 
 # Simple bot responses that do not rely on state
 module Responses
+  MAX_WORDS = 40
   CORE_RESPONSES = YAML.load_file('responses.yaml')
   NO_RESULT_RESPONSE = CORE_RESPONSES['no_result_response']
   DATAMUSE_API = "https://api.datamuse.com/words".freeze
@@ -13,7 +14,7 @@ module Responses
     antonym: [Woolf::Regexes::ANT, 'rel_ant'],
     rhyme: [Woolf::Regexes::RHYME, 'rel_rhy'],
     meanslike: [Woolf::Regexes::MEANSLIKE, 'ml'],
-    trigger: [Woolf::Regexes::TRIGGER, 'rel_trg'],
+    triggers: [Woolf::Regexes::TRIGGER, 'rel_trg'],
     describe: [Woolf::Regexes::DESCRIBE, 'rel_jjb']
   }
 
@@ -43,7 +44,7 @@ module Responses
   private
 
   def array_response(array)
-    array.empty? ? NO_RESULT_RESPONSE : array.map {|w| w["word"]}.join(', ')
+    array.empty? ? NO_RESULT_RESPONSE : array.map {|w| w["word"]}.slice(0, MAX_WORDS).join(', ')
   end
 
   def datamuse_request(event, regex, query)
