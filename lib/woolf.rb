@@ -50,7 +50,8 @@ class Woolf
     @virginia = bot_class.new(token: ENV['WOOLF_BOT_TOKEN'],
                               client_id: ENV['WOOLF_CLIENT_ID'],
                               name: 'woolf',
-                              ignore_bots: true)
+                              ignore_bots: true,
+                              compress_mode: :large)
     set_events
   end
 
