@@ -35,7 +35,7 @@ module Responses
   end
 
   def method_missing(name, *args)
-    super unless name.start_with?('get_')
+    super unless name.to_s.start_with?('get_')
     event = args.first
     relation = name.to_s.split('_').last.to_sym
     event.respond "#{event.author.mention} #{datamuse_request(event, *DATAMUSE_ARGS[relation])}"
