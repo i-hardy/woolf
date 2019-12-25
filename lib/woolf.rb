@@ -67,7 +67,6 @@ class Woolf
   end
 
   def stop_gracefully
-    LOGGER.info('Shutting down gracefully...')
     virginia.stop(true)
   end
 

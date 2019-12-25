@@ -11,8 +11,6 @@ command_list:
   - To get an interesting photo for inspiration, type '!inspiration'\n
   - Need tech support? Type !woolf support"
 error_response: 'One cannot think well, love well, sleep well, if one has not dined well... and I have not dined well'
-permissions_error: "I can't find or create the role 'sprinters'. \
-  Please give me permission to manage roles, then tell me !set sprint role and I'll try again"
 no_result_response: 'Little words that broke up the thought and dismembered it said nothing...'
 support_request: 'Get help in the Woolf tech support server: https://discordapp.com/invite/78R5nud'
 add_role: ', we have the habit of freedom and the courage to write exactly what we think'
