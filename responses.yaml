@@ -16,4 +16,4 @@ support_request: 'Get help in the Woolf tech support server: https://discordapp.
 add_role: ', we have the habit of freedom and the courage to write exactly what we think'
 remove_role: ' died young — alas, she never wrote a word...'
 join_sprint: ', so to work, even in poverty and obscurity, is worth while'
-sprint_cancelled: 'Sprint cancelled'
+cancel_sprint: 'Sprint cancelled'

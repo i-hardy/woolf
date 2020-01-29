@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
-require 'discordrb'
 require_relative 'responses'
-require_relative 'sprint_timer'
+require_relative 'sprints/sprint_timer'
 
 # This class wraps each server utilising the bot
 class WoolfServer

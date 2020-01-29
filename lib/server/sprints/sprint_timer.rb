@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'discordrb'
-require 'json'
 require_relative 'user_list'
 
 # This creates a timer object for a 'writing sprint', in which users attempt to

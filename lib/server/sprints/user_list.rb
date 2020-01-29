@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'discordrb'
-
 # This stores the sprinting role and any users opting in to a sprint,
 # and allows them to be mentioned individually
 class UserList

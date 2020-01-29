@@ -1,36 +1,20 @@
 # frozen_string_literal: true
 
-require 'logger'
 require 'discordrb'
 
 require_relative 'config'
-require_relative 'regexes'
-require_relative 'woolf_server'
+require_relative 'core/regexes'
+require_relative 'core/messages'
+require_relative 'core/logger'
+require_relative 'core/events'
+require_relative 'server/woolf_server'
 
 # Core bot class
 class Woolf
-  MESSAGES = {
-    Regexes::SPRINT => :writing_sprint,
-    '!sprinting' => :get_sprinters,
-    '!cancel sprint' => :cancel_sprint,
-    '!sprint role' => :permasprinters,
-    '!remove sprint role' => :tired_sprinters,
-    '!synonym' => :get_synonym,
-    '!antonym' => :get_antonym,
-    '!rhyme' => :get_rhyme,
-    '!wordslike' => :get_meanslike,
-    '!related' => :get_triggers,
-    '!describe' => :get_describe,
-    '!inspiration' => :inspire,
-    '!set sprint role' => :set_sprinting_role,
-    '!woolf support' => :support
-  }.freeze
-  LOGGER = Logger.new(STDOUT,
-                      level: Logger::INFO,
-                      datetime_format: '%Y-%m-%d %H:%M:%S',
-                      formatter: proc { |severity, datetime, _progname, msg|
-                        "#{datetime} #{severity}: #{msg}\n"
-                      })
+  # stop the bot responding to re-pastes of the command list
+  IS_INFO = proc { |message| message.content.match(/\s-\s.+\n/) }
+
+  include Woolf::Events
 
   def self.startup
     woolf = new
@@ -55,19 +39,23 @@ class Woolf
     set_events
   end
 
-  def set_events
-    on_ready
-    on_create
-    on_mention
-    set_commands
-  end
-
   def run
     virginia.run
   end
 
   def stop_gracefully
     virginia.stop(true)
+  end
+
+  private
+
+  attr_reader :virginia, :connected_servers
+
+  def set_events
+    on_ready
+    on_create
+    on_mention
+    set_commands
   end
 
   def server_finder(server)
@@ -90,11 +78,16 @@ class Woolf
   def set_commands
     MESSAGES.each_pair do |command, method|
       virginia.message(contains: command) do |event|
-        LOGGER.info("#{event.message.content}, #{event.server.name}")
-        woolf_catcher(method, event)
+        handle_message(method, event)
       end
     end
     LOGGER.info('Commands set')
+  end
+
+  def handle_message(method, event)
+    return if IS_INFO.call(event.message)
+    LOGGER.info("#{event.message.content}, #{event.server.name}")
+    woolf_catcher(method, event)
   end
 
   def server_rescue(server)
@@ -105,33 +98,6 @@ class Woolf
     LOGGER.error("#{e.message} in #{server.name}")
     puts e.backtrace
   end
-
-  def on_ready
-    virginia.ready do
-      virginia.servers.each_value do |server|
-        server_rescue(server)
-      end
-      LOGGER.info("#{connected_servers.length} servers connected")
-    end
-  end
-
-  def on_create
-    virginia.server_create do
-      virginia.servers.each_value do |server|
-        woolf_server_creator(server)
-      end
-    end
-  end
-
-  def on_mention
-    virginia.mention do |event|
-      event.respond Responses::CORE_RESPONSES['command_list']
-    end
-  end
-
-  private
-
-  attr_reader :virginia, :connected_servers
 
   Woolf.startup if $PROGRAM_NAME == __FILE__
 end
