@@ -5,7 +5,7 @@ source 'https://rubygems.org'
 
 gem 'discordrb', '>= 3.3.0'
 gem 'dotenv'
-gem 'flickraw'
+gem 'flickr'
 gem 'httparty'
 
 group :test do

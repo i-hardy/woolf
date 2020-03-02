@@ -17,7 +17,7 @@ GEM
     dotenv (2.7.2)
     event_emitter (0.2.6)
     ffi (1.10.0)
-    flickraw (0.9.9)
+    flickr (2.0.2)
     http-accept (1.7.0)
     http-cookie (1.0.3)
       domain_name (~> 0.5)
@@ -70,7 +70,7 @@ PLATFORMS
 DEPENDENCIES
   discordrb (>= 3.3.0)
   dotenv
-  flickraw
+  flickr
   httparty
   rspec
   simplecov

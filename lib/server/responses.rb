@@ -2,6 +2,7 @@
 
 require 'yaml'
 require 'httparty'
+require 'flickr'
 
 # Simple bot responses that do not rely on state
 module Responses
@@ -17,10 +18,11 @@ module Responses
     triggers: [Woolf::Regexes::TRIGGER, 'rel_trg'],
     describe: [Woolf::Regexes::DESCRIBE, 'rel_jjb']
   }.freeze
+  FLICKR_CLIENT = Flickr.new(ENV['FLICKR_API_KEY'], ENV['FLICKR_SECRET'])
 
   def inspire(event)
-    photo = flickr.interestingness.getList.to_a.sample
-    event.respond "#{event.author.mention} #{FlickRaw.url(photo)}"
+    photo = FLICKR_CLIENT.interestingness.getList.to_a.sample
+    event.respond "#{event.author.mention} #{Flickr.url(photo)}"
   rescue StandardError => exception
     Woolf::LOGGER.error(exception.message)
     event.respond "#{event.author.mention} #{NO_RESULT_RESPONSE}"
