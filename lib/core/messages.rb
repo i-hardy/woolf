@@ -11,7 +11,6 @@ class Woolf
     '!synonym' => :get_synonym,
     '!antonym' => :get_antonym,
     '!rhyme' => :get_rhyme,
-    '!wordslike' => :get_meanslike,
     '!related' => :get_triggers,
     '!describe' => :get_describe,
     '!inspiration' => :inspire,

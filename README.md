@@ -4,13 +4,13 @@
 
 > _Five hundred a year and a bot of one's own..._
 
-A Discord bot for writers, primarily intended for use during [NaNoWriMo](https://nanowrimo.org/).
+A Discord bot for writers.
 
 ## Features
 
 - Custom-length timers for writing sprints
-- Fetches synonyms and antonyms using the [DataMuse API](http://www.datamuse.com/api/)
-- Fetches inspirational photos using [Flickraw](https://github.com/hanklords/flickraw)
+- Fetches various word relations using the [DataMuse API](http://www.datamuse.com/api/)
+- Fetches inspirational photos using the [Flickr gem](https://github.com/cyclotron3k/flickr/)
 
 ## Usage
 

@@ -10,7 +10,6 @@ class Woolf
     SYN = Regexp.new("!synonym#{MATCH_ONE}") unless const_defined?(:SYN)
     ANT = Regexp.new("!antonym#{MATCH_ONE}") unless const_defined?(:ANT)
     RHYME = Regexp.new("!rhyme#{MATCH_ONE}") unless const_defined?(:RHYME)
-    MEANSLIKE = Regexp.new("!wordslike#{MATCH_ALL}") unless const_defined?(:MEANSLIKE)
     TRIGGER = Regexp.new("!related#{MATCH_ONE}") unless const_defined?(:TRIGGER)
     DESCRIBE = Regexp.new("!describe#{MATCH_ONE}") unless const_defined?(:DESCRIBE)
   end

@@ -14,7 +14,6 @@ module Responses
     synonym: [Woolf::Regexes::SYN, 'rel_syn'],
     antonym: [Woolf::Regexes::ANT, 'rel_ant'],
     rhyme: [Woolf::Regexes::RHYME, 'rel_rhy'],
-    meanslike: [Woolf::Regexes::MEANSLIKE, 'ml'],
     triggers: [Woolf::Regexes::TRIGGER, 'rel_trg'],
     describe: [Woolf::Regexes::DESCRIBE, 'rel_jjb']
   }.freeze

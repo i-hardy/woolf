@@ -11,8 +11,11 @@ require_relative 'server/woolf_server'
 
 # Core bot class
 class Woolf
-  # stop the bot responding to re-pastes of the command list
-  IS_INFO = proc { |message| message.content.match(/\s-\s.+\n/) }
+  # stop the bot responding to instructional messages
+  # regex matches multiple '![word]' instances in a message
+  IS_INFO = proc { |message| message.content.match(/(!\w+.+){2,}/m) }
+  # regex matches commands preceded by a quotation mark
+  IS_QUOTE = proc { |message| message.content.match(/(`|"|')!\w+/) }
 
   include Woolf::Events
 
@@ -85,7 +88,7 @@ class Woolf
   end
 
   def handle_message(method, event)
-    return if IS_INFO.call(event.message)
+    return if IS_INFO.call(event.message) || IS_QUOTE.call(event.message)
     LOGGER.info("#{event.message.content}, #{event.server.name}")
     woolf_catcher(method, event)
   end
