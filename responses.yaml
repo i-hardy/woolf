@@ -12,7 +12,7 @@ command_list:
   - To find adjectives to describe a noun, type '!describe [word]'\n
   - To get an interesting photo for inspiration, type '!inspiration'\n
   - Need tech support? Type !woolf support\n
-  - To invite this bot to another server, visit https://discordapp.com/oauth2/authorize?client_id=364771016523907072&scope=bot&permissions=268435456"
+  - To invite this bot to another server, visit <https://discordapp.com/oauth2/authorize?client_id=364771016523907072&scope=bot&permissions=268435456>"
 error_response: 'One cannot think well, love well, sleep well, if one has not dined well... and I have not dined well'
 no_result_response: 'Little words that broke up the thought and dismembered it said nothing...'
 support_request: 'Get help in the Woolf tech support server: https://discordapp.com/invite/78R5nud'
