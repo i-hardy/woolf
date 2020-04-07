@@ -1,22 +1,27 @@
-GEM
-  remote: https://rubygems.org/
+GIT
+  remote: https://github.com/discordrb/discordrb.git
+  revision: bb457fe981d2b997b704ad85008ec3b185b046e8
+  ref: bb457fe
   specs:
-    diff-lcs (1.3)
     discordrb (3.3.0)
       discordrb-webhooks (~> 3.3.0)
       ffi (>= 1.9.24)
       opus-ruby
-      rbnacl (~> 3.4.0)
-      rest-client (>= 2.1.0.rc1)
+      rest-client (>= 2.0.0)
       websocket-client-simple (>= 0.3.0)
     discordrb-webhooks (3.3.0)
       rest-client (>= 2.1.0.rc1)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    diff-lcs (1.3)
     docile (1.1.5)
-    domain_name (0.5.20180417)
+    domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
     dotenv (2.7.2)
     event_emitter (0.2.6)
-    ffi (1.10.0)
+    ffi (1.12.2)
     flickr (2.0.2)
     http-accept (1.7.0)
     http-cookie (1.0.3)
@@ -24,16 +29,14 @@ GEM
     httparty (0.15.6)
       multi_xml (>= 0.5.2)
     json (2.1.0)
-    mime-types (3.2.2)
+    mime-types (3.3.1)
       mime-types-data (~> 3.2015)
-    mime-types-data (3.2018.0812)
+    mime-types-data (3.2019.1009)
     multi_xml (0.6.0)
     netrc (0.11.0)
     opus-ruby (1.0.1)
       ffi
-    rbnacl (3.4.0)
-      ffi
-    rest-client (2.1.0.rc1)
+    rest-client (2.1.0)
       http-accept (>= 1.7.0, < 2.0)
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 4.0)
@@ -58,7 +61,7 @@ GEM
     simplecov-html (0.10.2)
     unf (0.1.4)
       unf_ext
-    unf_ext (0.0.7.5)
+    unf_ext (0.0.7.7)
     websocket (1.2.8)
     websocket-client-simple (0.3.0)
       event_emitter
@@ -68,7 +71,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  discordrb (>= 3.3.0)
+  discordrb!
   dotenv
   flickr
   httparty
