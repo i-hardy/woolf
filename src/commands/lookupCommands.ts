@@ -56,10 +56,10 @@ const inspire: CommandFunction = async function(message) {
 }
 
 export const lookupCommands: CommandCollection = new Map([
-  [INSPIRE, inspire],
   [SYN, synonym],
   [ANT, antonym],
   [RHYME, rhyme],
   [TRIGGER, triggers],
   [DESCRIBE, describe],
+  [INSPIRE, inspire],
 ])
