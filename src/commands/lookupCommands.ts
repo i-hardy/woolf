@@ -1,7 +1,7 @@
 import { CommandCollection, CommandFunction, DatamuseCommandArgs, DatamuseCommandType, DatamuseWord } from "./types";
-import { datamuse } from "./http";
+import { datamuse, flickr } from "./http";
 import { noResult } from "../responses.json";
-import { SYN, ANT, RHYME, TRIGGER, DESCRIBE } from "../utils/regexes";
+import { INSPIRE, SYN, ANT, RHYME, TRIGGER, DESCRIBE } from "../utils/regexes";
 
 const MAX_WORDS = 40
 
@@ -14,8 +14,6 @@ const datamuseArgs: { [key in DatamuseCommandType]: DatamuseCommandArgs } = {
 }
 
 function cleanUpResponse(words: DatamuseWord[]) {
-  console.log(words);
-  
   return words.map(({ word }) => word).join(', ');
 }
 
@@ -49,7 +47,16 @@ const describe: CommandFunction = async function(message) {
   message.reply(await getDatamuseResponse(message.content, datamuseArgs.describe));
 }
 
+const inspire: CommandFunction = async function(message) {
+  const photos = await flickr.get();
+  const toShow = photos[Math.floor(Math.random() * photos.length)];
+  if (toShow.url) {
+    message.reply(toShow.url);
+  }
+}
+
 export const lookupCommands: CommandCollection = new Map([
+  [INSPIRE, inspire],
   [SYN, synonym],
   [ANT, antonym],
   [RHYME, rhyme],

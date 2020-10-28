@@ -21,3 +21,8 @@ export type DatamuseWord = {
   word: string,
   score?: number,
 }
+
+export type FlickrPhoto = {
+  id: string,
+  url?: string,
+}

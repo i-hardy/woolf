@@ -36,6 +36,7 @@
   "dependencies": {
     "axios": "^0.21.0",
     "discord.js": "^12.4.1",
-    "dotenv": "^8.2.0"
+    "dotenv": "^8.2.0",
+    "flickr-sdk": "^3.9.0"
   }
 }
