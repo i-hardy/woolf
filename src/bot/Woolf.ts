@@ -1,8 +1,7 @@
 import { Client, Collection, Guild } from 'discord.js';
 import WoolfServer from "./WoolfServer";
-import { TOKEN } from "./utils/constants";
-import { SPRINT } from "./utils/regexes";
-import { sprintCommands } from "./utils/commands";
+import { TOKEN } from "../utils/constants";
+import { lookupCommands, sprintCommands } from "../commands";
 
 type WoolfServerCollection = Map<Guild, WoolfServer>
 
@@ -26,7 +25,7 @@ export default class Woolf {
     });
   }
 
-  setCommands() {
+  setCommands(): Woolf {
     sprintCommands.forEach((commandFn, command) => {
       this.virginia.on('message', (message) => {
         if (message.content.match(command) && message.guild) {
@@ -35,14 +34,21 @@ export default class Woolf {
         }
       })
     });
+    lookupCommands.forEach((commandFn, command) => {
+      this.virginia.on('message', (message) => {
+        if (command.exec(message.content)) {
+          commandFn(message);
+        }
+      })
+    });
     return this;
   }
 
-  run(){
+  run(): void {
     this.virginia.login(TOKEN);
   }
 
-  stopGracefully() {
+  stopGracefully(): void {
     this.virginia.destroy();
   }
 }

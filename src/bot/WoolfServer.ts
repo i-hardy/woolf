@@ -1,6 +1,6 @@
 import { Guild, Message, Role } from "discord.js";
-import Sprint, { ISprint } from "./sprints/Sprint";
-import { ROLE_NAME, ROLE_COLOR } from "./utils/constants";
+import Sprint, { ISprint } from "../sprints/Sprint";
+import { ROLE_NAME, ROLE_COLOR } from "../utils/constants";
 
 function roleByName(role: Role) {
   return role.name === ROLE_NAME;

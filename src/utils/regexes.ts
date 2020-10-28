@@ -1,4 +1,4 @@
-const MATCH_ONE = '\s([a-zA-Z]*\b+)';
+const MATCH_ONE = '\\s([a-zA-Z]*\\b)';
 
 // const MATCH_ALL = '\s(.*)';
 

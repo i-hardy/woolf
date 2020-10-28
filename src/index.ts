@@ -1,5 +1,5 @@
 import Discord from 'discord.js';
-import Woolf from './Woolf';
+import Woolf from './bot/Woolf';
 
 (() => {
   new Woolf(Discord.Client)
