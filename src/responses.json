@@ -1,0 +1,8 @@
+{
+  "commandList": "There is no gate, no lock, no bolt that you can set upon the freedom of my mind:\n - To set up a writing sprint for y minutes in x minutes' time, type '!sprint in x for y'\n- To cancel a sprint, type '!cancel sprint'. Only the person who started the sprint, or someone with the manage messages permission, can do this\n - To opt-in to a sprint that's running, type '!sprinting'\n - To be notified of every sprint, type '!sprint role'\n - To stop being notified of every sprint, type '!remove sprint role'\n - To get synonyms for a word, type '!synonym [word]'\n - To get antonyms for a word, type '!antonym [word]'\n - To get rhymes for a word, type '!rhyme [word]'\n - To find words associated with a word, type '!related [word]'\n - To find adjectives to describe a noun, type '!describe [word]'\n - To get an interesting photo for inspiration, type '!inspiration'\n - Need tech support? Type !woolf support\n - To invite this bot to another server, visit <https: //discordapp.com/oauth2/authorize?client_id=364771016523907072&scope=bot&permissions=268435456>", "noResult": "Little words that broke up the thought and dismembered it said nothing...",
+  "support": "Get help in the Woolf tech support server: https://discordapp.com/invite/78R5nud",
+  "addRole": ", we have the habit of freedom and the courage to write exactly what we think",
+  "removeRole": " died young — alas, she never wrote a word...",
+  "joinSprint": ", so to work, even in poverty and obscurity, is worth while",
+  "cancelSprint": "Sprint cancelled"
+}

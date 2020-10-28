@@ -2,8 +2,11 @@ import { Client, Collection, Guild } from 'discord.js';
 import WoolfServer from "./WoolfServer";
 import { TOKEN } from "./utils/constants";
 import { SPRINT } from "./utils/regexes";
+import { sprintCommands } from "./utils/commands";
 
-function setUpServers(guilds: Collection<any, Guild>) {
+type WoolfServerCollection = Map<Guild, WoolfServer>
+
+function setUpServers(guilds: Collection<string, Guild>): WoolfServerCollection {
   return guilds.reduce((guildMap, guild) => {
     guildMap.set(guild, new WoolfServer(guild));
     return guildMap;
@@ -11,7 +14,7 @@ function setUpServers(guilds: Collection<any, Guild>) {
 }
 
 export default class Woolf {
-  connectedServers: Map<Guild, WoolfServer>;
+  connectedServers: WoolfServerCollection;
   virginia: Client;
 
   constructor(BotClass: typeof Client) {
@@ -21,13 +24,18 @@ export default class Woolf {
       this.connectedServers = setUpServers(this.virginia.guilds.cache)
       console.log(`${this.connectedServers.size} servers connected!`);
     });
+  }
 
-    this.virginia.on('message', (message) => {
-      if (message.content?.match(SPRINT) && message.guild) {        
-        const sendTo = this.connectedServers.get(message.guild);        
-        sendTo?.writingSprint(message);
-      }
+  setCommands() {
+    sprintCommands.forEach((commandFn, command) => {
+      this.virginia.on('message', (message) => {
+        if (message.content.match(command) && message.guild) {
+          const server = this.connectedServers.get(message.guild);
+          commandFn(message, server);
+        }
+      })
     });
+    return this;
   }
 
   run(){

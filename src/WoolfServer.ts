@@ -19,6 +19,10 @@ export default class WoolfServer {
     return this.#sprint.ended;
   }
 
+  private get canJoinSprint() {
+    return !this.#sprint.ended;
+  }
+
   // TODO: memoize this
   async getSprintRole(): Promise<Role> {
     const existingRole = this.guild.roles.cache.find(roleByName);
@@ -44,13 +48,13 @@ export default class WoolfServer {
   }
 
   cancelSprint(message: Message) {
-    if (this.canSprint && message.member) {
+    if (this.canJoinSprint && message.member) {
       this.#sprint.cancel?.(message.member);
     }
   }
 
   joinSprint(message: Message) {
-    if (this.canSprint && message.member) {
+    if (this.canJoinSprint && message.member) {
       this.#sprint.addSprinter?.(message.member);
     }
   }

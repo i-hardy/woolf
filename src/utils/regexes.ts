@@ -1,6 +1,6 @@
 const MATCH_ONE = '\s([a-zA-Z]*\b+)';
 
-export const MATCH_ALL = '\s(.*)';
+// const MATCH_ALL = '\s(.*)';
 
 export const INFO = /(!\w+.+){2,}/m;
 
