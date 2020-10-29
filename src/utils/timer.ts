@@ -1,3 +1,3 @@
-export function timer(milliseconds: number) {
+export function timer(milliseconds: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
 }

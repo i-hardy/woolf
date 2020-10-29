@@ -1,4 +1,5 @@
 import { Guild, Message, Role } from "discord.js";
+import memoize from "../utils/memoize";
 import Sprint, { ISprint } from "../sprints/Sprint";
 import { ROLE_NAME, ROLE_COLOR } from "../utils/constants";
 
@@ -23,7 +24,7 @@ export default class WoolfServer {
     return !this.#sprint.ended;
   }
 
-  // TODO: memoize this
+  @memoize
   async getSprintRole(): Promise<Role> {
     const existingRole = this.guild.roles.cache.find(roleByName);
     if (existingRole) {
@@ -39,7 +40,7 @@ export default class WoolfServer {
     }
   }
 
-  async writingSprint(message: Message) {
+  async writingSprint(message: Message): Promise<void> {
     if (this.canSprint) { 
       this.#sprint = new Sprint(message);  
       this.#sprint.addSprinter?.(await this.getSprintRole());
@@ -47,23 +48,23 @@ export default class WoolfServer {
     }
   }
 
-  cancelSprint(message: Message) {
+  cancelSprint(message: Message): void {
     if (this.canJoinSprint && message.member) {
       this.#sprint.cancel?.(message.member);
     }
   }
 
-  joinSprint(message: Message) {
+  joinSprint(message: Message): void {
     if (this.canJoinSprint && message.member) {
       this.#sprint.addSprinter?.(message.member);
     }
   }
 
-  async receiveSprintRole(message: Message) {
+  async receiveSprintRole(message: Message): Promise<void> {
     message.member?.roles.add(await this.getSprintRole());
   }
 
-  async removeSprintRole(message: Message) {
+  async removeSprintRole(message: Message): Promise<void> {
     message.member?.roles.remove(await this.getSprintRole());
   }
 }

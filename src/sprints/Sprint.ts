@@ -27,7 +27,7 @@ export default class Sprint {
     this.startAndDuration();
   }
 
-  get ended() {
+  get ended(): boolean {
     return this.#ended;
   }
 
@@ -43,50 +43,50 @@ export default class Sprint {
     return this.startIn === 1 ? 'minute' : 'minutes';
   }
 
-  addSprinter(user: GuildMember | Role) {
+  addSprinter(user: GuildMember | Role): void {
     this.userList.addSprinter(user);
   }
 
-  end() {
+  end(): void {
     this.#ended = true;
   }
 
-  cancel(canceller: GuildMember) {
+  cancel(canceller: GuildMember): void {
     if (this.canCancel(canceller)) {
       this.end();
     }
   }
 
-  async setStart() {
+  async setStart(): Promise<void> {
     if (!this.startIn) return;
     this.#message.channel.send(`Get ready to sprint in ${this.startIn} ${this.minutes}`);
     await timer(this.startIn * MINS_TO_MS);
     this.startSprint();
   }
 
-  async startSprint() {
+  async startSprint(): Promise<void> {
     if (this.ended) return;
     this.#message.channel.send(`${this.userList.userMentions()} ${this.length} minute sprint starts now!`);
     await this.sprint();
     this.endSprint();
   }
 
-  endSprint() {
+  endSprint(): void {
     if (this.ended) return;
     this.#message.channel.send(`${this.userList.userMentions()} Stop sprinting!`);
     this.end();
   }
 
-  private async sprint() {
+  private async sprint(): Promise<void> {
     if (!this.length) return;
     return timer(this.length * MINS_TO_MS);
   }
 
-  private startAndDuration() {
+  private startAndDuration(): void {
     this.#times = this.#message?.content?.match(SPRINT)?.slice(1, 3).map(n => parseInt(n));
   }
 
-  private canCancel(canceller: GuildMember) {
+  private canCancel(canceller: GuildMember): boolean {
     return canceller === this.#owner || canceller.hasPermission('MANAGE_MESSAGES')
   }
 }
