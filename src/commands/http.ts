@@ -1,11 +1,11 @@
-import axios from "axios";
-import Flickr, { RawFlickrPhoto } from "flickr-sdk";
-import { FLICKR_KEY } from "../utils/constants";
-import { DatamuseWord, FlickrPhoto } from "./types";
+import axios, { AxiosError } from "axios";
+import { setupCache } from "axios-cache-adapter";
+import { FLICKR_KEY, CACHE_TIME } from "../utils/constants";
+import { DatamuseWord } from "./types";
 import { noResult } from "../responses.json";
 
 const DATAMUSE_API = 'https://api.datamuse.com/words'
-const flickrClient = new Flickr(FLICKR_KEY);
+const FLICKR_API = 'https://www.flickr.com/services/rest'
 
 function returnDefaultIfFailure(data: string): DatamuseWord[] {
   const response = JSON.parse(data);
@@ -17,22 +17,36 @@ function returnDefaultIfFailure(data: string): DatamuseWord[] {
   return response;
 }
 
+const datamuseCache = setupCache({
+  maxAge: CACHE_TIME,
+  readOnError: (error: AxiosError) => {
+    return error.response?.status && error.response.status >= 400 && error.response.status < 600
+  },
+});
+
 export const datamuse = axios.create({
+  adapter: datamuseCache.adapter,
   baseURL: DATAMUSE_API,
   timeout: 2500,
   transformResponse: [returnDefaultIfFailure],
-})
+});
 
-function createFlickrPhoto(photo: RawFlickrPhoto): FlickrPhoto {
-  return {
-    id: photo.id,
-    url: photo.url_l,
-  };
-}
+const flickrCache = setupCache({
+  maxAge: CACHE_TIME,
+  readOnError: (error: AxiosError) => {
+    return error.response?.status && error.response.status >= 400 && error.response.status < 600
+  },
+});
 
-export const flickr = {
-  async get(): Promise<FlickrPhoto[]> {
-    const { body } = await flickrClient.interestingness.getList({ per_page: 50, extras: ['url_l'] });
-    return body.photos.photo.map(createFlickrPhoto);
+export const flickr = axios.create({
+  adapter: flickrCache.adapter,
+  baseURL: FLICKR_API,
+  timeout: 2500,
+  params: {
+    api_key: FLICKR_KEY,
+    method: 'flickr.interestingness.getList',
+    extras: 'url_l',
+    format: 'json',
+    nojsoncallback: 1
   }
-}
+});

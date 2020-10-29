@@ -24,5 +24,5 @@ export type DatamuseWord = {
 
 export type FlickrPhoto = {
   id: string,
-  url?: string,
+  url_l?: string,
 }

@@ -1,6 +1,8 @@
 import { Client, Guild } from 'discord.js';
 import WoolfServer from "./WoolfServer";
 import { TOKEN } from "../utils/constants";
+import { COMMAND } from "../utils/regexes";
+import memoize from "../utils/memoize";
 import { commandsMap, commandsList } from "../commands";
 import { commandList } from "../responses.json";
 
@@ -37,7 +39,7 @@ export default class Woolf {
       const botId = this.#virginia.user?.id;
       if (botId && message.mentions.has(botId)) {
         message.channel.send(commandList);
-      } else if (message.content.startsWith('!')) {          
+      } else if (message.content.match(COMMAND)) {          
         const command = this.findCommand(message.content);          
         if (command) {
           commandsMap.get(command)?.(message, this.#connectedServers.get(message.guild));
@@ -62,6 +64,7 @@ export default class Woolf {
     return this.#connectedServers;
   }
 
+  @memoize
   private findCommand(messageContent: string) {
     return commandsList.find((command) => messageContent.match(command));
   }

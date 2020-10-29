@@ -8,6 +8,6 @@ import Woolf from './bot/Woolf';
     .run();
   const stop = woolf.stopGracefully.bind(woolf);
   process.on('SIGINT', stop);
-  process.on('SIGTERM', stop);
-  process.on('SIGKILL', stop);
+  // process.on('SIGTERM', stop);
+  // process.on('SIGKILL', stop);
 })();

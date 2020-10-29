@@ -1,4 +1,4 @@
-import { CommandCollection, CommandFunction, DatamuseCommandArgs, DatamuseCommandType, DatamuseWord } from "./types";
+import { CommandCollection, CommandFunction, DatamuseCommandArgs, DatamuseCommandType, DatamuseWord, FlickrPhoto } from "./types";
 import { datamuse, flickr } from "./http";
 import { noResult } from "../responses.json";
 import { INSPIRE, SYN, ANT, RHYME, TRIGGER, DESCRIBE } from "../utils/regexes";
@@ -47,11 +47,20 @@ const describe: CommandFunction = async function(message) {
   message.reply(await getDatamuseResponse(message.content, datamuseArgs.describe));
 }
 
+async function getFlickrResponse(): Promise<FlickrPhoto[]> {
+  try {
+    const response = await flickr.get('/');
+    return response.data?.photos?.photo;
+  } catch (error) {
+    return [];
+  }
+}
+
 const inspire: CommandFunction = async function(message) {
-  const photos = await flickr.get();
+  const photos = await getFlickrResponse();
   const toShow = photos[Math.floor(Math.random() * photos.length)];
-  if (toShow.url) {
-    message.reply(toShow.url);
+  if (toShow?.url_l) {
+    message.reply(toShow.url_l);
   }
 }
 

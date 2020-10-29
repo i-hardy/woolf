@@ -1,6 +1,6 @@
 const MATCH_ONE = '\\s([a-zA-Z]*\\b)';
 
-// const MATCH_ALL = '\s(.*)';
+export const COMMAND = /![a-zA-Z]/
 
 export const INFO = /(!\w+.+){2,}/m;
 
