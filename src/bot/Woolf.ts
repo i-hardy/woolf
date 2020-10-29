@@ -1,5 +1,6 @@
 import { Client, Guild } from 'discord.js';
 import WoolfServer from "./WoolfServer";
+import { logger } from "../utils/logger";
 import { TOKEN } from "../utils/constants";
 import { COMMAND } from "../utils/regexes";
 import memoize from "../utils/memoize";
@@ -20,7 +21,7 @@ export default class Woolf {
   guildEvents(): Woolf {
     this.#virginia.on('ready', () => {
       this.#virginia.guilds.cache.forEach(this.createNewServer.bind(this));
-      console.log(`${this.#connectedServers.size} servers connected!`);
+      logger.info(`${this.#connectedServers.size} servers connected!`);
     });
 
     this.#virginia.on('guildCreate', (guild) => {

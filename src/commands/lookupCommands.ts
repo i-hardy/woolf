@@ -20,9 +20,16 @@ function cleanUpResponse(words: DatamuseWord[]) {
 async function getDatamuseResponse(content: string, [regex, query]: DatamuseCommandArgs): Promise<string> {
   const [, word] = content.match(regex) || [];
   if (word) {
-    const response = await datamuse.get(`?${query}=${word}`);
+    const response = await datamuse.get('/', {
+      params: {
+        [query]: word
+      }
+    });
     const words: DatamuseWord[] = response.data;
-    return cleanUpResponse(words.slice(0, MAX_WORDS));
+    if (words.length) {
+      return cleanUpResponse(words.slice(0, MAX_WORDS));
+    }
+    return noResult;
   }
   return noResult;
 }
