@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface Memoizable<T> extends TypedPropertyDescriptor<T> {
-  cache?: Map<string, unknown>;
+  memoizedCache?: Map<string, unknown>;
 }
 
 interface MemoizableFunction {
@@ -12,9 +12,7 @@ export default function memoize(_: unknown, propertyKey: string | symbol, descri
   const char0 = String.fromCharCode(0);
 
   descriptor.value = function(...args: any[]) {
-      this.cache ||= new Map();
-
-      console.log(this.cache);
+      this.memoizedCache ||= new Map();
       
       let cacheKey = propertyKey.toString();
 
@@ -31,10 +29,10 @@ export default function memoize(_: unknown, propertyKey: string | symbol, descri
           arg
         );
       }
-      if (!this.cache.get(cacheKey)) {
-        this.cache.set(cacheKey, originalMethod?.apply(this, args))
+      if (!this.memoizedCache.get(cacheKey)) {
+        this.memoizedCache.set(cacheKey, originalMethod?.apply(this, args))
       }
-      return this.cache.get(cacheKey);
+      return this.memoizedCache.get(cacheKey);
   };
 
   return descriptor;

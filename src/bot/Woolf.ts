@@ -1,61 +1,68 @@
-import { Client, Collection, Guild } from 'discord.js';
+import { Client, Guild } from 'discord.js';
 import WoolfServer from "./WoolfServer";
 import { TOKEN } from "../utils/constants";
 import { commandsMap, commandsList } from "../commands";
 import { commandList } from "../responses.json";
 
-type WoolfServerCollection = Collection<Guild | null, WoolfServer>
-interface WoolfBot {
-  run(): void;
-  stopGracefully(): void;
-}
-interface WoolfSetup {
-  setCommands(): WoolfBot;
-}
+type WoolfServerCollection = Map<Guild | null, WoolfServer>
 
-function createNewServer(guildMap: WoolfServerCollection, guild: Guild) {
-  guildMap.set(guild, new WoolfServer(guild));
-  return guildMap;
-}
+export default class Woolf {
+  #virginia: Client;
+  #connectedServers: WoolfServerCollection;
 
-export default function Woolf(BotClass: typeof Client): WoolfSetup {
-  const connectedServers = new Collection<Guild | null, WoolfServer>();
-  const virginia = new BotClass();
-  const virginiaId = virginia.user?.id;
+  constructor(BotClass: typeof Client) {
+    this.#connectedServers = new Map<Guild | null, WoolfServer>();
+    this.#virginia = new BotClass();
+  }
+  
+  guildEvents(): Woolf {
+    this.#virginia.on('ready', () => {
+      this.#virginia.guilds.cache.forEach(this.createNewServer.bind(this));
+      console.log(`${this.#connectedServers.size} servers connected!`);
+    });
 
-  virginia.on('ready', () => {
-    virginia.guilds.cache.reduce(createNewServer, connectedServers);
-    console.log(`${connectedServers.size} servers connected!`);
-  });
+    this.#virginia.on('guildCreate', (guild) => {
+      this.createNewServer(guild);
+    });
+  
+    this.#virginia.on('guildDelete', (guild) => {
+      this.#connectedServers.delete(guild);
+    });
 
-  virginia.on('guildCreate', (guild) => {
-    createNewServer(connectedServers, guild);
-  });
+    return this;
+  }
 
-  virginia.on('guildDelete', (guild) => {
-    connectedServers.delete(guild);
-  });
-
-  return {
-    setCommands() {
-      virginia.on('message', (message) => {
-        if (virginiaId && message.mentions.has(virginiaId)) {
-          message.channel.send(commandList);
-        } else {          
-          const command = commandsList.find((command) => message.content.match(command));          
-          if (command) {
-            commandsMap.get(command)?.(message, connectedServers.get(message.guild));
-          }
+  setCommands(): Woolf {
+    this.#virginia.on('message', (message) => {
+      const botId = this.#virginia.user?.id;
+      if (botId && message.mentions.has(botId)) {
+        message.channel.send(commandList);
+      } else if (message.content.startsWith('!')) {          
+        const command = this.findCommand(message.content);          
+        if (command) {
+          commandsMap.get(command)?.(message, this.#connectedServers.get(message.guild));
         }
-      });
-      return {
-        run() {
-          virginia.login(TOKEN)
-        },
-        stopGracefully(): void {
-          virginia.destroy();
-        }
-      };
-    }
+      }
+    });
+    return this;
+  }
+
+  run(): Woolf {
+    this.#virginia.login(TOKEN);
+    return this;
+  }
+
+  stopGracefully(): Woolf {
+    this.#virginia.destroy();
+    return this;
+  }
+
+  private createNewServer(guild: Guild) {
+    this.#connectedServers.set(guild, new WoolfServer(guild));
+    return this.#connectedServers;
+  }
+
+  private findCommand(messageContent: string) {
+    return commandsList.find((command) => messageContent.match(command));
   }
 }

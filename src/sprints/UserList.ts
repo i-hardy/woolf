@@ -1,21 +1,19 @@
-import { GuildMember, Role } from "discord.js";
-
-interface IMentionable {
+interface Mentionable {
   toString(): string
 }
 
 export default class UserList {
-  list: IMentionable[]
+  list: Mentionable[]
 
   constructor() {
     this.list = []
   }
 
-  addSprinter(user: IMentionable) {
+  addSprinter(user: Mentionable): void {
     this.list.push(user);
   }
 
-  userMentions() {
+  userMentions(): string {
     return this.list.map(user => user.toString()).join(' ')
   }
 }
