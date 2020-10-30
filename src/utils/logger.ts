@@ -49,5 +49,5 @@ logger.exception = function (error, prefix?) {
   const stack = error.stack;
   prefix = prefix ? `${prefix} ` : '';
 
-  return this.error(`${prefix}${message}, stack ${stack}`) as BetterLogger;
+  return this.error(`${prefix}${message}, stack: ${stack}`) as BetterLogger;
 };

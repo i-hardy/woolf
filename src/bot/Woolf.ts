@@ -71,7 +71,7 @@ export default class Woolf {
         logger.info(`${message.content} in ${message.guild?.name ?? 'no server'}`);
       } catch (error) {        
         message.reply("sorry, an error occurred when I tried to do that");
-        logger.exception(error);
+        logger.exception(error, `Error executing ${message.content} in ${message.guild?.name ?? 'no server'}`);
       }
     }
   }
@@ -91,7 +91,7 @@ export default class Woolf {
         this.#connectedServers.set(guild, new WoolfServer(guild));
       }
     } catch (error) {
-      logger.exception(error);
+      logger.exception(error, `Error in setting up a WoolfServer instance for ${guild.name}`);
     }
     return this.#connectedServers;
   }
