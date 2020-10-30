@@ -1,7 +1,7 @@
 import { CommandCollection, CommandFunction, DatamuseCommandArgs, DatamuseCommandType, DatamuseWord, FlickrPhoto } from "./types";
 import { datamuse, flickr } from "./http";
-import { noResult } from "../responses.json";
-import { INSPIRE, SYN, ANT, RHYME, TRIGGER, DESCRIBE } from "../utils/regexes";
+import { noResult, support } from "../responses.json";
+import { INSPIRE, SYN, ANT, RHYME, TRIGGER, DESCRIBE, SUPPORT } from "../utils/regexes";
 
 const MAX_WORDS = 40;
 
@@ -71,6 +71,10 @@ const inspire: CommandFunction = async function(message) {
   }
 }
 
+const woolfSupport: CommandFunction = async function(message) {
+  message.channel.send(support);
+}
+
 export const lookupCommands: CommandCollection = new Map([
   [SYN, synonym],
   [ANT, antonym],
@@ -78,4 +82,5 @@ export const lookupCommands: CommandCollection = new Map([
   [TRIGGER, triggers],
   [DESCRIBE, describe],
   [INSPIRE, inspire],
+  [SUPPORT, woolfSupport],
 ])

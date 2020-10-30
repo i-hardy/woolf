@@ -16,7 +16,6 @@ export default class WoolfServer {
   constructor(guild: Guild) {
     this.guild = guild;
     this.#sprint = { ended: true };
-    this.getSprintRole();
   }
 
   private get rolePosition() {

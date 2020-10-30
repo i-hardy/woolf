@@ -24,7 +24,7 @@ npm install
 npm start
 ```
 
-You can also use the provided Dockerfile, or pull the latest prebuilt image from `imogenhardy/woolf:latest`.
+You can also use the provided Dockerfile, or pull the latest prebuilt image from `imogenhardy/woolf:latest`. The bot is set up to output logs to Loggly, but will default to stdout if no Loggly client token is set.
 
 ### Woolf 1.0
 

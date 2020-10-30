@@ -10,6 +10,8 @@ export const SPRINT = /!sprint in (\d+) for (\d+)/
 
 export const INSPIRE = /!inspiration/;
 
+export const SUPPORT = /!woolf support/;
+
 export const SYN = new RegExp(`!synonym${MATCH_ONE}`);
 
 export const ANT = new RegExp(`!antonym${MATCH_ONE}`);

@@ -18,5 +18,7 @@ export const ROLE_NAME = 'sprinters';
 
 export const ROLE_COLOR = 7_512_794;
 
-// One hour default cache
-export const CACHE_TIME = 60 * 60 * 1000;
+// 24 hours default cache
+export const CACHE_TIME = 24 * 60 * 60 * 1000;
+
+export const DEFAULT_TIMEOUT = 5000;

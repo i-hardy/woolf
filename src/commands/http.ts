@@ -1,6 +1,6 @@
 import axios, { AxiosError } from "axios";
 import { setupCache } from "axios-cache-adapter";
-import { FLICKR_KEY, CACHE_TIME } from "../utils/constants";
+import { FLICKR_KEY, CACHE_TIME, DEFAULT_TIMEOUT } from "../utils/constants";
 
 const DATAMUSE_API = 'https://api.datamuse.com/words'
 const FLICKR_API = 'https://www.flickr.com/services/rest'
@@ -16,7 +16,7 @@ const datamuseCache = setupCache({
 export const datamuse = axios.create({
   adapter: datamuseCache.adapter,
   baseURL: DATAMUSE_API,
-  timeout: 2500,
+  timeout: DEFAULT_TIMEOUT,
 });
 
 const flickrCache = setupCache({
@@ -30,7 +30,7 @@ const flickrCache = setupCache({
 export const flickr = axios.create({
   adapter: flickrCache.adapter,
   baseURL: FLICKR_API,
-  timeout: 2500,
+  timeout: DEFAULT_TIMEOUT,
   params: {
     api_key: FLICKR_KEY,
     method: 'flickr.interestingness.getList',

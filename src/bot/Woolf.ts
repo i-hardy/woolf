@@ -19,11 +19,10 @@ export default class Woolf {
   }
   
   guildEvents(): Woolf {
-    this.#virginia.on('ready', () => {
-      this.#virginia.guilds.cache.forEach((guild) => {
-        this.createNewServer(guild);
-      });
-
+    this.#virginia.on('ready', async () => {
+      await Promise.all(this.#virginia.guilds.cache.map(async (guild) => {
+        await this.createNewServer(guild);
+      }));
       logger.info(`Woolf started. ${this.#connectedServers.size} servers verified and connected!`);
     });
 
@@ -85,10 +84,12 @@ export default class Woolf {
     return false;
   }
 
-  private createNewServer(guild: Guild) {
+  private async createNewServer(guild: Guild) {
     try {
       if (this.checkServerPermissions(guild)) {
-        this.#connectedServers.set(guild, new WoolfServer(guild));
+        const newServer = new WoolfServer(guild);
+        await newServer.getSprintRole();
+        this.#connectedServers.set(guild, newServer);
       }
     } catch (error) {
       logger.exception(error, `Error in setting up a WoolfServer instance for ${guild.name}`);
