@@ -3,7 +3,7 @@ import { datamuse, flickr } from "./http";
 import { noResult } from "../responses.json";
 import { INSPIRE, SYN, ANT, RHYME, TRIGGER, DESCRIBE } from "../utils/regexes";
 
-const MAX_WORDS = 40
+const MAX_WORDS = 40;
 
 const datamuseArgs: { [key in DatamuseCommandType]: DatamuseCommandArgs } = {
   synonym: [SYN, 'rel_syn'],

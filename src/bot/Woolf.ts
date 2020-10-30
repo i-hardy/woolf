@@ -1,8 +1,8 @@
-import { Client, Guild } from 'discord.js';
+import { Client, Guild, Message } from 'discord.js';
 import WoolfServer from "./WoolfServer";
 import { logger } from "../utils/logger";
 import { TOKEN } from "../utils/constants";
-import { COMMAND } from "../utils/regexes";
+import { COMMAND, INFO, QUOTE } from "../utils/regexes";
 import memoize from "../utils/memoize";
 import { commandsMap, commandsList } from "../commands";
 import { commandList } from "../responses.json";
@@ -20,8 +20,11 @@ export default class Woolf {
   
   guildEvents(): Woolf {
     this.#virginia.on('ready', () => {
-      this.#virginia.guilds.cache.forEach(this.createNewServer.bind(this));
-      logger.info(`${this.#connectedServers.size} servers connected!`);
+      this.#virginia.guilds.cache.forEach((guild) => {
+        this.createNewServer(guild);
+      });
+
+      logger.info(`Woolf started. ${this.#connectedServers.size} servers verified and connected!`);
     });
 
     this.#virginia.on('guildCreate', (guild) => {
@@ -30,6 +33,7 @@ export default class Woolf {
   
     this.#virginia.on('guildDelete', (guild) => {
       this.#connectedServers.delete(guild);
+      this.#virginia.guilds.cache.delete(guild.id);
     });
 
     return this;
@@ -37,14 +41,12 @@ export default class Woolf {
 
   setCommands(): Woolf {
     this.#virginia.on('message', (message) => {
+      if (this.isIgnorable(message.content)) return;
       const botId = this.#virginia.user?.id;
       if (botId && message.mentions.has(botId)) {
         message.channel.send(commandList);
       } else if (message.content.match(COMMAND)) {          
-        const command = this.findCommand(message.content);          
-        if (command) {
-          commandsMap.get(command)?.(message, this.#connectedServers.get(message.guild));
-        }
+        this.respondToCommand(message);
       }
     });
     return this;
@@ -57,16 +59,50 @@ export default class Woolf {
 
   stopGracefully(): Woolf {
     this.#virginia.destroy();
+    logger.info('Shutting down');
     return this;
   }
 
+  private async respondToCommand(message: Message) {
+    const command = this.findCommand(message.content);          
+    if (command) {
+      try {
+        await commandsMap.get(command)?.(message, this.#connectedServers.get(message.guild));
+        logger.info(`${message.content} in ${message.guild?.name ?? 'no server'}`);
+      } catch (error) {        
+        message.reply("sorry, an error occurred when I tried to do that");
+        logger.exception(error);
+      }
+    }
+  }
+
+  private checkServerPermissions(guild: Guild) {
+    const botId = this.#virginia.user?.id;
+    if (botId) {
+      const botMember = guild.member(botId);
+      return botMember?.permissions.has('MANAGE_ROLES');
+    }
+    return false;
+  }
+
   private createNewServer(guild: Guild) {
-    this.#connectedServers.set(guild, new WoolfServer(guild));
+    try {
+      if (this.checkServerPermissions(guild)) {
+        this.#connectedServers.set(guild, new WoolfServer(guild));
+      }
+    } catch (error) {
+      logger.exception(error);
+    }
     return this.#connectedServers;
   }
 
   @memoize
   private findCommand(messageContent: string) {
     return commandsList.find((command) => messageContent.match(command));
+  }
+
+  @memoize
+  private isIgnorable(messageContent: string) {
+    return messageContent.match(INFO) || messageContent.match(QUOTE);
   }
 }

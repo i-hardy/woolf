@@ -1,23 +1,23 @@
 import { CommandCollection, CommandFunction } from './types';
 import { SPRINT } from '../utils/regexes';
 
-const sprint: CommandFunction = function(message, server) {
+const sprint: CommandFunction = async function(message, server) {
   server?.writingSprint(message);
 }
 
-const sprinting: CommandFunction = function(message, server) {
+const sprinting: CommandFunction = async function(message, server) {
   server?.joinSprint(message);
 }
 
-const cancelSprint: CommandFunction = function(message, server) {
+const cancelSprint: CommandFunction = async function(message, server) {
   server?.cancelSprint(message);
 }
 
-const sprintRole: CommandFunction = function(message, server) {
+const sprintRole: CommandFunction = async function(message, server) {
   server?.receiveSprintRole(message);
 }
 
-const removeSprintRole: CommandFunction = function(message, server) {
+const removeSprintRole: CommandFunction = async function(message, server) {
   server?.removeSprintRole(message);
 }
 

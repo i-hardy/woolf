@@ -2,7 +2,7 @@ import { Message } from 'discord.js';
 import WoolfServer from "../bot/WoolfServer";
 
 export interface CommandFunction {
-  (message: Message, server?: WoolfServer): void;
+  (message: Message, server?: WoolfServer): Promise<void>;
 }
 
 export type CommandCollection = Map<RegExp, CommandFunction>;

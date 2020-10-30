@@ -31,8 +31,23 @@ function generateTransport() {
   });
 }
 
-export const logger = winston.createLogger({
+export interface BetterLogger extends winston.Logger {
+  exception: (error: Error, prefix?: string) => BetterLogger;
+}
+
+export const logger: BetterLogger = winston.createLogger({
+  level: 'info',
   transports: [
-    generateTransport(),
-  ]
-});
+    generateTransport()
+  ],
+}) as BetterLogger;
+
+// Monkey patching Winston because it incorrectly logs `Error` instances even in 2020
+// Related issue: https://github.com/winstonjs/winston/issues/1498
+logger.exception = function (error, prefix?) {
+  const message = error.message || error.toString();
+  const stack = error.stack;
+  prefix = prefix ? `${prefix} ` : '';
+
+  return this.error(`${prefix}${message}, stack ${stack}`) as BetterLogger;
+};
