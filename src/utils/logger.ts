@@ -1,3 +1,4 @@
+import { DiscordAPIError } from "discord.js";
 import winston from "winston";
 import { Loggly } from "winston-loggly-bulk";
 import { ENV, LOGGLY_KEY } from "./constants";
@@ -32,7 +33,7 @@ function generateTransport() {
 }
 
 export interface BetterLogger extends winston.Logger {
-  exception: (error: Error, prefix?: string) => BetterLogger;
+  exception: (error: DiscordAPIError, prefix?: string) => BetterLogger;
 }
 
 export const logger: BetterLogger = winston.createLogger({
@@ -45,9 +46,10 @@ export const logger: BetterLogger = winston.createLogger({
 // Monkey patching Winston because it incorrectly logs `Error` instances even in 2020
 // Related issue: https://github.com/winstonjs/winston/issues/1498
 logger.exception = function (error, prefix?) {
-  const message = error.message || error.toString();
-  const stack = error.stack;
-  prefix = prefix ? `${prefix} ` : '';
+  const { message, stack, path, code, method } = error;
+  const logMessage = prefix ? `${prefix} ` : '';
 
-  return this.error(`${prefix}${message}, stack: ${stack}`) as BetterLogger;
+  return this.error(
+    `${logMessage}${message}, stack: ${stack}, path: ${path}, code: ${code}, method: ${method}`
+    ) as BetterLogger;
 };

@@ -3,13 +3,29 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/i-hardy/woolf"
+  },
   "scripts": {
-    "start": "node -r ts-node/register ./src/index.ts",
-    "start:watch": "nodemon",
+    "start": "node ./dist/index.js",
+    "dev": "node -r ts-node/register ./src/index.ts",
+    "dev:watch": "nodemon",
     "build": "tsc"
   },
   "author": "",
   "license": "ISC",
+  "dependencies": {
+    "@types/uuid": "^8.3.0",
+    "@types/winston-loggly-bulk": "^3.0.0",
+    "axios": "^0.21.0",
+    "axios-cache-adapter": "^2.5.0",
+    "discord.js": "^12.4.1",
+    "dotenv": "^8.2.0",
+    "uuid": "^8.3.1",
+    "winston": "^3.3.3",
+    "winston-loggly-bulk": "^3.1.1"
+  },
   "devDependencies": {
     "@types/node": "^14.14.5",
     "@typescript-eslint/eslint-plugin": "^4.6.0",
@@ -30,16 +46,7 @@
     "watch": [
       "src"
     ],
-    "exec": "npm start",
+    "exec": "npm run dev",
     "ext": "ts"
-  },
-  "dependencies": {
-    "@types/winston-loggly-bulk": "^3.0.0",
-    "axios": "^0.21.0",
-    "axios-cache-adapter": "^2.5.0",
-    "discord.js": "^12.4.1",
-    "dotenv": "^8.2.0",
-    "winston": "^3.3.3",
-    "winston-loggly-bulk": "^3.1.1"
   }
 }

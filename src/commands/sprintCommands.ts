@@ -2,7 +2,7 @@ import { CommandCollection, CommandFunction } from './types';
 import { SPRINT } from '../utils/regexes';
 
 const sprint: CommandFunction = async function(message, server) {
-  server?.writingSprint(message);
+  await server?.writingSprint(message);
 }
 
 const sprinting: CommandFunction = async function(message, server) {
@@ -14,11 +14,11 @@ const cancelSprint: CommandFunction = async function(message, server) {
 }
 
 const sprintRole: CommandFunction = async function(message, server) {
-  server?.receiveSprintRole(message);
+  await server?.receiveSprintRole(message);
 }
 
 const removeSprintRole: CommandFunction = async function(message, server) {
-  server?.removeSprintRole(message);
+  await server?.removeSprintRole(message);
 }
 
 export const sprintCommands: CommandCollection = new Map([

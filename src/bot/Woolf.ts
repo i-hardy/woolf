@@ -17,6 +17,18 @@ export default class Woolf {
     this.#connectedServers = new Map<Guild | null, WoolfServer>();
     this.#virginia = new BotClass();
   }
+
+  errorEvents(): Woolf {
+    this.#virginia.on('error', (error) => {
+      logger.exception(error);
+    });
+
+    this.#virginia.on('shardError', (error) => {
+      logger.exception(error, 'A websocket connection encountered an error:');
+    });
+
+    return this;
+  }
   
   guildEvents(): Woolf {
     this.#virginia.on('ready', async () => {
@@ -38,7 +50,7 @@ export default class Woolf {
     return this;
   }
 
-  setCommands(): Woolf {
+  messageEvents(): Woolf {
     this.#virginia.on('message', (message) => {
       if (this.isIgnorable(message.content)) return;
       const botId = this.#virginia.user?.id;

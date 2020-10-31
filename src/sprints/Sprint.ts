@@ -1,5 +1,7 @@
 import { Message, GuildMember, Role } from 'discord.js';
+import { v4 as uuidv4 } from 'uuid';
 import UserList from './UserList';
+import { logger } from "../utils/logger";
 import { SPRINT } from "../utils/regexes";
 import { timer } from "../utils/timer";
 
@@ -14,12 +16,14 @@ export interface ISprint {
 
 export default class Sprint {
   userList: UserList;
+  id: string;
   #ended: boolean;
   #message: Message;
   #owner: GuildMember | null;
   #times?: number[];
 
   constructor(message: Message) {
+    this.id = uuidv4();
     this.#ended = false;
     this.#owner = message?.member;
     this.userList = new UserList();
@@ -67,6 +71,7 @@ export default class Sprint {
   async startSprint(): Promise<void> {
     if (this.ended) return;
     this.#message.channel.send(`${this.userList.userMentions()} ${this.length} minute sprint starts now!`);
+    logger.info(`Start sprint ${this.id}`);
     await this.sprint();
     this.endSprint();
   }
@@ -74,6 +79,7 @@ export default class Sprint {
   endSprint(): void {
     if (this.ended) return;
     this.#message.channel.send(`${this.userList.userMentions()} Stop sprinting!`);
+    logger.info(`End sprint ${this.id}`);
     this.end();
   }
 
