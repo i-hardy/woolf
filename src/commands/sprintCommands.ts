@@ -10,7 +10,7 @@ const sprinting: CommandFunction = async function(message, server) {
 }
 
 const cancelSprint: CommandFunction = async function(message, server) {
-  server?.cancelSprint(message);
+  await server?.cancelSprint(message);
 }
 
 const sprintRole: CommandFunction = async function(message, server) {

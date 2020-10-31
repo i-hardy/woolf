@@ -3,7 +3,7 @@ jobs:
   build:
     branches:
       only:
-        - master
+        - main
     docker:
       - image: cimg/node:14.15
     steps:

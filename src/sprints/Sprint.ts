@@ -53,12 +53,14 @@ export default class Sprint {
 
   end(): void {
     this.#ended = true;
+    logger.info(`End sprint ${this.id}`);
   }
 
   cancel(canceller: GuildMember): void {
     if (this.canCancel(canceller)) {
       this.end();
     }
+    throw new Error("Canceller is not the sprint owner or admin");
   }
 
   async setStart(): Promise<void> {
@@ -79,7 +81,6 @@ export default class Sprint {
   endSprint(): void {
     if (this.ended) return;
     this.#message.channel.send(`${this.userList.userMentions()} Stop sprinting!`);
-    logger.info(`End sprint ${this.id}`);
     this.end();
   }
 

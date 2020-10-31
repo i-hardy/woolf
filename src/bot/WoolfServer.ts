@@ -1,4 +1,5 @@
 import { Guild, Message, Role } from "discord.js";
+import { addRole, removeRole, cancelSprint } from "../responses.json";
 import memoize from "../utils/memoize";
 import Sprint, { ISprint } from "../sprints/Sprint";
 import { ENV, ROLE_NAME, ROLE_COLOR } from "../utils/constants";
@@ -52,13 +53,14 @@ export default class WoolfServer {
     if (this.canSprint) { 
       this.#sprint = new Sprint(message);  
       this.#sprint.addSprinter?.(await this.getSprintRole());
-      this.#sprint.setStart?.();
+      await this.#sprint.setStart?.();
     }
   }
 
-  cancelSprint(message: Message): void {
+  async cancelSprint(message: Message): Promise<void> {
     if (this.canJoinSprint && message.member) {
       this.#sprint.cancel?.(message.member);
+      await message.reply(cancelSprint)
     }
   }
 
@@ -69,10 +71,12 @@ export default class WoolfServer {
   }
 
   async receiveSprintRole(message: Message): Promise<void> {
-    message.member?.roles.add(await this.getSprintRole());
+    await message.member?.roles.add(await this.getSprintRole());
+    await message.reply(addRole);
   }
-
+  
   async removeSprintRole(message: Message): Promise<void> {
-    message.member?.roles.remove(await this.getSprintRole());
+    await message.member?.roles.remove(await this.getSprintRole());
+    await message.reply(removeRole);
   }
 }

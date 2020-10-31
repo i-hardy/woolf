@@ -35,23 +35,23 @@ async function getDatamuseResponse(content: string, [regex, query]: DatamuseComm
 }
 
 const synonym: CommandFunction = async function(message) {
-  message.reply(await getDatamuseResponse(message.content, datamuseArgs.synonym));
+  await message.reply(await getDatamuseResponse(message.content, datamuseArgs.synonym));
 }
 
 const antonym: CommandFunction = async function(message) {
-  message.reply(await getDatamuseResponse(message.content, datamuseArgs.antonym));
+  await message.reply(await getDatamuseResponse(message.content, datamuseArgs.antonym));
 }
 
 const rhyme: CommandFunction = async function(message) {
-  message.reply(await getDatamuseResponse(message.content, datamuseArgs.rhyme));
+  await message.reply(await getDatamuseResponse(message.content, datamuseArgs.rhyme));
 }
 
 const triggers: CommandFunction = async function(message) {
-  message.reply(await getDatamuseResponse(message.content, datamuseArgs.triggers));
+  await message.reply(await getDatamuseResponse(message.content, datamuseArgs.triggers));
 }
 
 const describe: CommandFunction = async function(message) {
-  message.reply(await getDatamuseResponse(message.content, datamuseArgs.describe));
+  await message.reply(await getDatamuseResponse(message.content, datamuseArgs.describe));
 }
 
 async function getFlickrResponse(): Promise<FlickrPhoto[]> {
@@ -67,12 +67,12 @@ const inspire: CommandFunction = async function(message) {
   const photos = await getFlickrResponse();
   const toShow = photos[Math.floor(Math.random() * photos.length)];
   if (toShow?.url_l) {
-    message.reply(toShow.url_l);
+    await message.reply(toShow.url_l);
   }
 }
 
 const woolfSupport: CommandFunction = async function(message) {
-  message.channel.send(support);
+  await message.channel.send(support);
 }
 
 export const lookupCommands: CommandCollection = new Map([
