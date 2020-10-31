@@ -55,7 +55,7 @@ export default class Woolf {
       if (this.isIgnorable(message.content)) return;
       const botId = this.#virginia.user?.id;
       if (botId && message.mentions.has(botId)) {
-        message.channel.send(commandList);
+        this.respondToMention(message);
       } else if (message.content.match(COMMAND)) {          
         this.respondToCommand(message);
       }
@@ -70,8 +70,17 @@ export default class Woolf {
 
   stopGracefully(): Woolf {
     this.#virginia.destroy();
-    logger.info('Shutting down');
     return this;
+  }
+
+  private async respondToMention(message: Message) {
+    try {
+      await message.channel.send(commandList);
+      logger.info(`Command list sent in ${message.guild?.name ?? 'no server'}`);
+    } catch (error) {        
+      message.reply("sorry, an error occurred when I tried to do that").catch(() => null);
+      logger.exception(error, `Error responding to mention in ${message.guild?.name ?? 'no server'}`);
+    }
   }
 
   private async respondToCommand(message: Message) {
@@ -81,7 +90,7 @@ export default class Woolf {
         await commandsMap.get(command)?.(message, this.#connectedServers.get(message.guild));
         logger.info(`${message.content} in ${message.guild?.name ?? 'no server'}`);
       } catch (error) {        
-        message.reply("sorry, an error occurred when I tried to do that");
+        message.reply("sorry, an error occurred when I tried to do that").catch(() => null);
         logger.exception(error, `Error executing ${message.content} in ${message.guild?.name ?? 'no server'}`);
       }
     }

@@ -65,23 +65,23 @@ export default class Sprint {
 
   async setStart(): Promise<void> {
     if (!this.startIn) return;
-    this.#message.channel.send(`Get ready to sprint in ${this.startIn} ${this.minutes}`);
+    await this.#message.channel.send(`Get ready to sprint in ${this.startIn} ${this.minutes}`);
     await timer(this.startIn * MINS_TO_MS);
-    this.startSprint();
+    return this.startSprint();
   }
 
   async startSprint(): Promise<void> {
     if (this.ended) return;
-    this.#message.channel.send(`${this.userList.userMentions()} ${this.length} minute sprint starts now!`);
+    await this.#message.channel.send(`${this.userList.userMentions()} ${this.length} minute sprint starts now!`);
     logger.info(`Start sprint ${this.id}`);
     await this.sprint();
-    this.endSprint();
+    return this.endSprint();
   }
 
-  endSprint(): void {
+  async endSprint(): Promise<void> {
     if (this.ended) return;
-    this.#message.channel.send(`${this.userList.userMentions()} Stop sprinting!`);
-    this.end();
+    await this.#message.channel.send(`${this.userList.userMentions()} Stop sprinting!`);
+    return this.end();
   }
 
   private async sprint(): Promise<void> {
