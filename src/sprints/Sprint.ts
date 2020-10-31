@@ -36,7 +36,7 @@ export default class Sprint {
   }
 
   private get startIn() {
-    return this.#times?.[0];
+    return this.#times?.[0] || 0;
   }
 
   private get length() {
@@ -65,7 +65,6 @@ export default class Sprint {
   }
 
   async setStart(): Promise<void> {
-    if (!this.startIn) return;
     await this.#message.channel.send(`Get ready to sprint in ${this.startIn} ${this.minutes}`);
     await timer(this.startIn * MINS_TO_MS);
     return this.startSprint();
