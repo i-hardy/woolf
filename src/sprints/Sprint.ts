@@ -59,8 +59,9 @@ export default class Sprint {
   cancel(canceller: GuildMember): void {
     if (this.canCancel(canceller)) {
       this.end();
+    } else {
+      throw new Error("Canceller is not the sprint owner or admin");
     }
-    throw new Error("Canceller is not the sprint owner or admin");
   }
 
   async setStart(): Promise<void> {

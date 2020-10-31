@@ -77,7 +77,7 @@ export default class Woolf {
     try {
       await message.channel.send(commandList);
       logger.info(`Command list sent in ${message.guild?.name ?? 'no server'}`);
-    } catch (error) {        
+    } catch (error) {
       message.reply("sorry, an error occurred when I tried to do that").catch(() => null);
       logger.exception(error, `Error responding to mention in ${message.guild?.name ?? 'no server'}`);
     }
@@ -89,7 +89,7 @@ export default class Woolf {
       try {
         await commandsMap.get(command)?.(message, this.#connectedServers.get(message.guild));
         logger.info(`${message.content} in ${message.guild?.name ?? 'no server'}`);
-      } catch (error) {        
+      } catch (error) {
         message.reply("sorry, an error occurred when I tried to do that").catch(() => null);
         logger.exception(error, `Error executing ${message.content} in ${message.guild?.name ?? 'no server'}`);
       }

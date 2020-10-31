@@ -54,6 +54,8 @@ export default class WoolfServer {
       this.#sprint = new Sprint(message);  
       this.#sprint.addSprinter?.(await this.getSprintRole());
       await this.#sprint.setStart?.();
+    } else {
+      throw new Error("Existing sprint has not ended yet");
     }
   }
 
@@ -67,6 +69,8 @@ export default class WoolfServer {
   joinSprint(message: Message): void {
     if (this.canJoinSprint && message.member) {
       this.#sprint.addSprinter?.(message.member);
+    } else {
+      throw new Error("There is no active sprint");
     }
   }
 
