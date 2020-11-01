@@ -1,6 +1,7 @@
 import { Message, GuildMember, Role } from 'discord.js';
 import { v4 as uuidv4 } from 'uuid';
 import UserList from './UserList';
+import SprintError from "./SprintError";
 import { logger } from "../utils/logger";
 import { SPRINT } from "../utils/regexes";
 import { timer } from "../utils/timer";
@@ -9,6 +10,7 @@ const MINS_TO_MS = 60000;
 
 export interface ISprint {
   ended: boolean;
+  id: string;
   addSprinter?(user: GuildMember | Role): void;
   cancel?(canceller: GuildMember): void;
   setStart?(): Promise<void>;
@@ -60,7 +62,7 @@ export default class Sprint {
     if (this.canCancel(canceller)) {
       this.end();
     } else {
-      throw new Error("Canceller is not the sprint owner or admin");
+      throw new SprintError("Canceller is not the sprint owner or admin", this);
     }
   }
 

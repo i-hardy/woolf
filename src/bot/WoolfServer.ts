@@ -2,6 +2,7 @@ import { Guild, Message, Role } from "discord.js";
 import { addRole, removeRole, cancelSprint } from "../responses.json";
 import memoize from "../utils/memoize";
 import Sprint, { ISprint } from "../sprints/Sprint";
+import SprintError from "../sprints/SprintError";
 import { ENV, ROLE_NAME, ROLE_COLOR } from "../utils/constants";
 
 const BOT_NAME = ENV === 'development' ? 'testing-bot' : 'woolf';
@@ -16,7 +17,7 @@ export default class WoolfServer {
 
   constructor(guild: Guild) {
     this.guild = guild;
-    this.#sprint = { ended: true };
+    this.#sprint = { ended: true, id: 'default sprint' };
   }
 
   private get rolePosition() {
@@ -55,7 +56,7 @@ export default class WoolfServer {
       this.#sprint.addSprinter?.(await this.getSprintRole());
       await this.#sprint.setStart?.();
     } else {
-      throw new Error("Existing sprint has not ended yet");
+      throw new SprintError("Existing sprint has not ended yet", this.#sprint);
     }
   }
 
@@ -70,7 +71,7 @@ export default class WoolfServer {
     if (this.canJoinSprint && message.member) {
       this.#sprint.addSprinter?.(message.member);
     } else {
-      throw new Error("There is no active sprint");
+      throw new SprintError("There is no active sprint", this.#sprint);
     }
   }
 
