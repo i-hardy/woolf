@@ -54,7 +54,7 @@ export default class Woolf {
     this.#virginia.on('message', (message) => {
       if (this.isIgnorable(message.content)) return;
       const botId = this.#virginia.user?.id;
-      if (botId && message.mentions.has(botId)) {
+      if (botId && message.mentions.has(botId, { ignoreRoles: true, ignoreEveryone: true })) {
         this.respondToMention(message);
       } else if (message.content.match(COMMAND)) {          
         this.respondToCommand(message);
