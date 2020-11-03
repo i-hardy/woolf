@@ -87,8 +87,8 @@ export default class Woolf {
     const command = this.findCommand(message.content);          
     if (command) {
       try {
-        await commandsMap.get(command)?.(message, this.#connectedServers.get(message.guild));
         logger.info(`${message.content} in ${message.guild?.name ?? 'no server'}`);
+        await commandsMap.get(command)?.(message, this.#connectedServers.get(message.guild));
       } catch (error) {
         message.reply("sorry, an error occurred when I tried to do that").catch(() => null);
         logger.exception(error, `Error executing ${message.content} in ${message.guild?.name ?? 'no server'}`);
