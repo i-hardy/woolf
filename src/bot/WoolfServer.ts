@@ -1,5 +1,5 @@
 import { Guild, Message, Role } from "discord.js";
-import { addRole, removeRole, cancelSprint } from "../responses.json";
+import { addRole, removeRole, cancelSprint, joinSprint } from "../responses.json";
 import memoize from "../utils/memoize";
 import Sprint, { ISprint } from "../sprints/Sprint";
 import SprintError from "../sprints/SprintError";
@@ -67,9 +67,10 @@ export default class WoolfServer {
     }
   }
 
-  joinSprint(message: Message): void {
+  async joinSprint(message: Message): Promise<void> {
     if (this.canJoinSprint && message.member) {
       this.#sprint.addSprinter?.(message.member);
+      await message.reply(joinSprint);
     } else {
       throw new SprintError("There is no active sprint", this.#sprint);
     }

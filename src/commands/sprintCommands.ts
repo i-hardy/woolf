@@ -6,7 +6,7 @@ const sprint: CommandFunction = async function(message, server) {
 }
 
 const sprinting: CommandFunction = async function(message, server) {
-  server?.joinSprint(message);
+  await server?.joinSprint(message);
 }
 
 const cancelSprint: CommandFunction = async function(message, server) {
