@@ -1,10 +1,10 @@
-import dotenv from 'dotenv'
+import dotenv from 'dotenv';
 
 dotenv.config();
 
 type Environment =
   | 'development'
-  | 'production'
+  | 'production';
 
 export const ENV: Environment = process.env.NODE_ENV as Environment || 'development';
 

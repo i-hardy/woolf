@@ -1,5 +1,5 @@
 import { Message } from 'discord.js';
-import WoolfServer from "../bot/WoolfServer";
+import WoolfServer from '../bot/WoolfServer';
 
 export interface CommandFunction {
   (message: Message, server?: WoolfServer): Promise<void>;
@@ -12,7 +12,7 @@ export enum DatamuseCommandType {
   'antonym' = 'antonym',
   'rhyme' = 'rhyme',
   'triggers' = 'triggers',
-  'describe' = 'describe'
+  'describe' = 'describe',
 }
 
 export type DatamuseCommandArgs = [RegExp, string];
@@ -20,9 +20,9 @@ export type DatamuseCommandArgs = [RegExp, string];
 export type DatamuseWord = {
   word: string,
   score?: number,
-}
+};
 
 export type FlickrPhoto = {
   id: string,
   url_l?: string,
-}
+};

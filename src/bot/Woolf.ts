@@ -1,16 +1,27 @@
 import { Client, Guild, Message } from 'discord.js';
-import WoolfServer from "./WoolfServer";
-import { logger } from "../utils/logger";
-import { TOKEN } from "../utils/constants";
-import { COMMAND, INFO, QUOTE } from "../utils/regexes";
-import memoize from "../utils/memoize";
-import { commandsMap, commandsList } from "../commands";
-import { commandList } from "../responses.json";
+import WoolfServer from './WoolfServer';
+import { logger } from '../utils/logger';
+import { TOKEN } from '../utils/constants';
+import { COMMAND, INFO, QUOTE } from '../utils/regexes';
+import memoize from '../utils/memoize';
+import { commandsMap, commandsList } from '../commands';
+import { commandList } from '../responses.json';
 
-type WoolfServerCollection = Map<Guild | null, WoolfServer>
+type WoolfServerCollection = Map<Guild | null, WoolfServer>;
+
+async function respondToMention(message: Message) {
+  try {
+    await message.channel.send(commandList);
+    logger.info(`Command list sent in ${message.guild?.name ?? 'no server'}`);
+  } catch (error) {
+    message.reply('sorry, an error occurred when I tried to do that').catch(() => null);
+    logger.exception(error, `Error responding to mention in ${message.guild?.name ?? 'no server'}`);
+  }
+}
 
 export default class Woolf {
   #virginia: Client;
+
   #connectedServers: WoolfServerCollection;
 
   constructor(BotClass: typeof Client) {
@@ -29,7 +40,7 @@ export default class Woolf {
 
     return this;
   }
-  
+
   guildEvents(): Woolf {
     this.#virginia.on('ready', async () => {
       await Promise.all(this.#virginia.guilds.cache.map(async (guild) => {
@@ -41,7 +52,7 @@ export default class Woolf {
     this.#virginia.on('guildCreate', (guild) => {
       this.createNewServer(guild);
     });
-  
+
     this.#virginia.on('guildDelete', (guild) => {
       this.#connectedServers.delete(guild);
       this.#virginia.guilds.cache.delete(guild.id);
@@ -55,8 +66,8 @@ export default class Woolf {
       if (this.isIgnorable(message.content)) return;
       const botId = this.#virginia.user?.id;
       if (botId && message.mentions.has(botId, { ignoreRoles: true, ignoreEveryone: true })) {
-        this.respondToMention(message);
-      } else if (message.content.match(COMMAND)) {          
+        respondToMention(message);
+      } else if (message.content.match(COMMAND)) {
         this.respondToCommand(message);
       }
     });
@@ -73,24 +84,14 @@ export default class Woolf {
     return this;
   }
 
-  private async respondToMention(message: Message) {
-    try {
-      await message.channel.send(commandList);
-      logger.info(`Command list sent in ${message.guild?.name ?? 'no server'}`);
-    } catch (error) {
-      message.reply("sorry, an error occurred when I tried to do that").catch(() => null);
-      logger.exception(error, `Error responding to mention in ${message.guild?.name ?? 'no server'}`);
-    }
-  }
-
   private async respondToCommand(message: Message) {
-    const command = this.findCommand(message.content);          
+    const command = this.findCommand(message.content);
     if (command) {
       try {
         logger.info(`${message.content} in ${message.guild?.name ?? 'no server'}`);
         await commandsMap.get(command)?.(message, this.#connectedServers.get(message.guild));
       } catch (error) {
-        message.reply("sorry, an error occurred when I tried to do that").catch(() => null);
+        message.reply('sorry, an error occurred when I tried to do that').catch(() => null);
         logger.exception(error, `Error executing ${message.content} in ${message.guild?.name ?? 'no server'}`);
       }
     }
@@ -118,6 +119,7 @@ export default class Woolf {
     return this.#connectedServers;
   }
 
+  /* eslint-disable class-methods-use-this */
   @memoize
   private findCommand(messageContent: string) {
     return commandsList.find((command) => messageContent.match(command));

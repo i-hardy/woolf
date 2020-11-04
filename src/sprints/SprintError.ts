@@ -1,4 +1,4 @@
-import { ISprint } from "./Sprint";
+import { ISprint } from './types';
 
 export default class SprintError extends Error {
   sprint: ISprint;

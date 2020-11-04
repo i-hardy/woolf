@@ -1,5 +1,5 @@
-import { sprintCommands } from "./sprintCommands";
-import { lookupCommands } from "./lookupCommands";
+import { sprintCommands } from './sprintCommands';
+import { lookupCommands } from './lookupCommands';
 
 export const commandsMap = new Map([
   ...sprintCommands,

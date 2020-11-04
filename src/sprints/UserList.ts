@@ -3,10 +3,10 @@ interface Mentionable {
 }
 
 export default class UserList {
-  list: Mentionable[]
+  list: Mentionable[];
 
   constructor() {
-    this.list = []
+    this.list = [];
   }
 
   addSprinter(user: Mentionable): void {
@@ -14,6 +14,6 @@ export default class UserList {
   }
 
   userMentions(): string {
-    return this.list.map(user => user.toString()).join(' ')
+    return this.list.map((user) => user.toString()).join(' ');
   }
 }

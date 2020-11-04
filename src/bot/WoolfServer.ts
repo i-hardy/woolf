@@ -1,9 +1,12 @@
-import { Guild, Message, Role } from "discord.js";
-import { addRole, removeRole, cancelSprint, joinSprint } from "../responses.json";
-import memoize from "../utils/memoize";
-import Sprint, { ISprint } from "../sprints/Sprint";
-import SprintError from "../sprints/SprintError";
-import { ENV, ROLE_NAME, ROLE_COLOR } from "../utils/constants";
+import { Guild, Message, Role } from 'discord.js';
+import {
+  addRole, removeRole, cancelSprint, joinSprint,
+} from '../responses.json';
+import memoize from '../utils/memoize';
+import Sprint from '../sprints/Sprint';
+import { ISprint } from '../sprints/types';
+import SprintError from '../sprints/SprintError';
+import { ENV, ROLE_NAME, ROLE_COLOR } from '../utils/constants';
 
 const BOT_NAME = ENV === 'development' ? 'testing-bot' : 'woolf';
 
@@ -13,6 +16,7 @@ function roleByName(role: Role) {
 
 export default class WoolfServer {
   guild: Guild;
+
   #sprint: ISprint;
 
   constructor(guild: Guild) {
@@ -38,32 +42,31 @@ export default class WoolfServer {
     const existingRole = this.guild.roles.cache.find(roleByName);
     if (existingRole) {
       return existingRole;
-    } else {
-      return this.guild.roles.create({
-        data: {
-          name: ROLE_NAME,
-          color: ROLE_COLOR,
-          mentionable: true,
-          position: this.rolePosition,
-        }
-      })
     }
+    return this.guild.roles.create({
+      data: {
+        name: ROLE_NAME,
+        color: ROLE_COLOR,
+        mentionable: true,
+        position: this.rolePosition,
+      },
+    });
   }
 
   async writingSprint(message: Message): Promise<void> {
-    if (this.canSprint) { 
-      this.#sprint = new Sprint(message);  
+    if (this.canSprint) {
+      this.#sprint = new Sprint(message);
       this.#sprint.addSprinter?.(await this.getSprintRole());
       await this.#sprint.setStart?.();
     } else {
-      throw new SprintError("Existing sprint has not ended yet", this.#sprint);
+      throw new SprintError('Existing sprint has not ended yet', this.#sprint);
     }
   }
 
   async cancelSprint(message: Message): Promise<void> {
     if (this.canJoinSprint && message.member) {
       this.#sprint.cancel?.(message.member);
-      await message.reply(cancelSprint)
+      await message.reply(cancelSprint);
     }
   }
 
@@ -72,7 +75,7 @@ export default class WoolfServer {
       this.#sprint.addSprinter?.(message.member);
       await message.reply(joinSprint);
     } else {
-      throw new SprintError("There is no active sprint", this.#sprint);
+      throw new SprintError('There is no active sprint', this.#sprint);
     }
   }
 
@@ -80,7 +83,7 @@ export default class WoolfServer {
     await message.member?.roles.add(await this.getSprintRole());
     await message.reply(addRole);
   }
-  
+
   async removeSprintRole(message: Message): Promise<void> {
     await message.member?.roles.remove(await this.getSprintRole());
     await message.reply(removeRole);

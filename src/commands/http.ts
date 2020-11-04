@@ -1,16 +1,18 @@
-import axios, { AxiosError } from "axios";
-import { setupCache } from "axios-cache-adapter";
-import { FLICKR_KEY, CACHE_TIME, DEFAULT_TIMEOUT } from "../utils/constants";
+import axios, { AxiosError } from 'axios';
+import { setupCache } from 'axios-cache-adapter';
+import { FLICKR_KEY, CACHE_TIME, DEFAULT_TIMEOUT } from '../utils/constants';
 
-const DATAMUSE_API = 'https://api.datamuse.com/words'
-const FLICKR_API = 'https://www.flickr.com/services/rest'
+const DATAMUSE_API = 'https://api.datamuse.com/words';
+const FLICKR_API = 'https://www.flickr.com/services/rest';
+
+function readOnError(error: AxiosError) {
+  return error.response?.status && error.response.status >= 400 && error.response.status < 600;
+}
 
 const datamuseCache = setupCache({
   maxAge: CACHE_TIME,
   exclude: { query: false },
-  readOnError: (error: AxiosError) => {
-    return error.response?.status && error.response.status >= 400 && error.response.status < 600
-  },
+  readOnError,
 });
 
 export const datamuse = axios.create({
@@ -22,9 +24,7 @@ export const datamuse = axios.create({
 const flickrCache = setupCache({
   maxAge: CACHE_TIME,
   exclude: { query: false },
-  readOnError: (error: AxiosError) => {
-    return error.response?.status && error.response.status >= 400 && error.response.status < 600
-  },
+  readOnError,
 });
 
 export const flickr = axios.create({
@@ -36,6 +36,6 @@ export const flickr = axios.create({
     method: 'flickr.interestingness.getList',
     extras: 'url_l',
     format: 'json',
-    nojsoncallback: 1
-  }
+    nojsoncallback: 1,
+  },
 });

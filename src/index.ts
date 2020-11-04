@@ -1,5 +1,5 @@
 import Discord from 'discord.js';
-import { logger } from "./utils/logger";
+import { logger } from './utils/logger';
 import Woolf from './bot/Woolf';
 
 (() => {

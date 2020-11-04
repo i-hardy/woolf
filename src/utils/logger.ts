@@ -1,17 +1,14 @@
-import { DiscordAPIError } from "discord.js";
-import winston from "winston";
-import { Loggly } from "winston-loggly-bulk";
-import { ENV, LOGGLY_KEY } from "./constants";
-import SprintError from "../sprints/SprintError";
+import { DiscordAPIError } from 'discord.js';
+import winston from 'winston';
+import { Loggly } from 'winston-loggly-bulk';
+import { ENV, LOGGLY_KEY } from './constants';
+import SprintError from '../sprints/SprintError';
 
-const upcaseLevel = winston.format.printf((info) => {
-  info.level = info.level.toUpperCase();
-  return JSON.stringify(info);
-})
+const upcaseLevel = winston.format.printf(
+  (info) => JSON.stringify({ ...info, level: info.level.toUpperCase() }),
+);
 
-const logFormat = winston.format.printf((info) => {
-  return `[${info.timestamp}] ${info.level}: ${JSON.stringify(info.message, null, 4)}`;
-});
+const logFormat = winston.format.printf((info) => `[${info.timestamp}] ${info.level}: ${JSON.stringify(info.message, null, 4)}`);
 
 function generateTransport() {
   if (ENV === 'development' || !LOGGLY_KEY) {
@@ -29,11 +26,11 @@ function generateTransport() {
     subdomain: 'woolf',
     token: LOGGLY_KEY,
     json: true,
-    tags: ["Winston-NodeJS"],
+    tags: ['Winston-NodeJS'],
   });
 }
 
-type LoggableError = Error | SprintError | DiscordAPIError
+type LoggableError = Error | SprintError | DiscordAPIError;
 
 export interface BetterLogger extends winston.Logger {
   exception: (error: LoggableError, prefix?: string) => BetterLogger;
@@ -42,13 +39,15 @@ export interface BetterLogger extends winston.Logger {
 export const logger: BetterLogger = winston.createLogger({
   level: 'info',
   transports: [
-    generateTransport()
+    generateTransport(),
   ],
 }) as BetterLogger;
 
 function exceptionMessage(error: LoggableError) {
   if (error instanceof DiscordAPIError) {
-    const { message, stack, path, code, method } = error;
+    const {
+      message, stack, path, code, method,
+    } = error;
     return `${message}, stack: ${stack}, path: ${path}, code: ${code}, method: ${method}`;
   }
   if (error instanceof SprintError) {
@@ -61,6 +60,6 @@ function exceptionMessage(error: LoggableError) {
 
 // Monkey patching Winston because it incorrectly logs `Error` instances even in 2020
 // Related issue: https://github.com/winstonjs/winston/issues/1498
-logger.exception = function (error, prefix = '') {
+logger.exception = function exception(error, prefix = '') {
   return this.error(`${prefix} ${exceptionMessage(error)}`) as BetterLogger;
 };

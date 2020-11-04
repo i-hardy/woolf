@@ -4,14 +4,15 @@
   "description": "",
   "main": "index.js",
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/i-hardy/woolf"
+    "type": "git",
+    "url": "https://github.com/i-hardy/woolf"
   },
   "scripts": {
     "start": "node ./dist/index.js",
     "dev": "node -r ts-node/register ./src/index.ts",
     "dev:watch": "nodemon",
-    "build": "tsc"
+    "build": "tsc",
+    "lint": "eslint . --ext .ts"
   },
   "author": "",
   "license": "ISC",
@@ -28,9 +29,10 @@
   },
   "devDependencies": {
     "@types/node": "^14.14.5",
-    "@typescript-eslint/eslint-plugin": "^4.6.0",
+    "@typescript-eslint/eslint-plugin": "^4.6.1",
     "@typescript-eslint/parser": "^4.6.0",
     "eslint": "^7.12.1",
+    "eslint-config-airbnb-typescript": "^12.0.0",
     "eslint-plugin-import": "^2.22.1",
     "nodemon": "^2.0.6",
     "ts-node": "^9.0.0",

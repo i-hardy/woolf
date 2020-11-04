@@ -1,12 +1,12 @@
 const MATCH_ONE = '\\s([a-zA-Z]*\\b)';
 
-export const COMMAND = /![a-zA-Z]/
+export const COMMAND = /![a-zA-Z]/;
 
 export const INFO = /(!\w+.+){2,}/m;
 
 export const QUOTE = /(`|"|')!\w+/;
 
-export const SPRINT = /!sprint in (\d+) for (\d+)/
+export const SPRINT = /!sprint in (\d+) for (\d+)/;
 
 export const INSPIRE = /!inspiration/;
 
