@@ -55,9 +55,14 @@ export default class WoolfServer {
 
   async writingSprint(message: Message): Promise<void> {
     if (this.canSprint) {
-      this.#sprint = new Sprint(message);
-      this.#sprint.addSprinter?.(await this.getSprintRole());
-      await this.#sprint.setStart?.();
+      try {
+        this.#sprint = new Sprint(message);
+        this.#sprint.addSprinter?.(await this.getSprintRole());
+        await this.#sprint.setStart?.();
+      } catch (error) {
+        this.#sprint.end?.();
+        throw error;
+      }
     } else {
       throw new SprintError('Existing sprint has not ended yet', this.#sprint);
     }

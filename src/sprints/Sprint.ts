@@ -46,6 +46,14 @@ export default class Sprint {
     return this.startIn === 1 ? 'minute' : 'minutes';
   }
 
+  toString(): string {
+    return JSON.stringify({
+      id: this.id,
+      ended: this.ended,
+      length: this.length,
+    });
+  }
+
   addSprinter(user: GuildMember | Role): void {
     this.userList.addSprinter(user);
   }

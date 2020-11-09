@@ -52,7 +52,7 @@ function exceptionMessage(error: LoggableError) {
   }
   if (error instanceof SprintError) {
     const { message, stack, sprint } = error;
-    return `${message}, stack: ${stack}, sprint: ${JSON.stringify(sprint)}`;
+    return `${message}, stack: ${stack}, sprint: ${sprint}`;
   }
   const { message, stack } = error;
   return `${message}, stack: ${stack}}`;
