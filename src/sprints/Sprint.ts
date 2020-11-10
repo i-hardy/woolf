@@ -67,7 +67,11 @@ export default class Sprint {
     if (this.canCancel(canceller)) {
       this.end();
     } else {
-      throw new SprintError('Canceller is not the sprint owner or admin', this);
+      throw new SprintError(
+        'Canceller is not the sprint owner or admin',
+        this,
+        'you do not have permission to cancel the sprint',
+      );
     }
   }
 

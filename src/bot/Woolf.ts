@@ -6,6 +6,7 @@ import { COMMAND, INFO, QUOTE } from '../utils/regexes';
 import memoize from '../utils/memoize';
 import { commandsMap, commandsList } from '../commands';
 import { commandList } from '../responses.json';
+import SprintError from '../sprints/SprintError';
 
 type WoolfServerCollection = Map<Guild | null, WoolfServer>;
 
@@ -91,7 +92,11 @@ export default class Woolf {
         logger.info(`${message.content} in ${message.guild?.name ?? 'no server'}`);
         await commandsMap.get(command)?.(message, this.#connectedServers.get(message.guild));
       } catch (error) {
-        message.reply('sorry, an error occurred when I tried to do that').catch(() => null);
+        let errorResponse = 'sorry, an error occurred when I tried to do that';
+        if (error instanceof SprintError && error.userMessage) {
+          errorResponse = error.userMessage;
+        }
+        message.reply(errorResponse).catch(() => null);
         logger.exception(error, `Error executing ${message.content} in ${message.guild?.name ?? 'no server'}`);
       }
     }

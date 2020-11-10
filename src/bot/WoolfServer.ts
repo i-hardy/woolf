@@ -64,7 +64,11 @@ export default class WoolfServer {
         throw error;
       }
     } else {
-      throw new SprintError('Existing sprint has not ended yet', this.#sprint);
+      throw new SprintError(
+        'Existing sprint has not ended',
+        this.#sprint,
+        'the current sprint has not ended yet',
+      );
     }
   }
 
@@ -72,6 +76,12 @@ export default class WoolfServer {
     if (this.canJoinSprint && message.member) {
       this.#sprint.cancel?.(message.member);
       await message.reply(cancelSprint);
+    } else {
+      throw new SprintError(
+        'No cancellable sprint',
+        this.#sprint,
+        'there is no sprint to be cancelled',
+      );
     }
   }
 
@@ -80,7 +90,11 @@ export default class WoolfServer {
       this.#sprint.addSprinter?.(message.member);
       await message.reply(joinSprint);
     } else {
-      throw new SprintError('There is no active sprint', this.#sprint);
+      throw new SprintError(
+        'No joinable sprint',
+        this.#sprint,
+        'there is no sprint for you to join',
+      );
     }
   }
 
