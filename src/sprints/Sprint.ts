@@ -1,4 +1,6 @@
-import { Message, GuildMember, Role } from 'discord.js';
+import {
+  Message, GuildMember, Permissions, Role,
+} from 'discord.js';
 import { v4 as uuidv4 } from 'uuid';
 import UserList from './UserList';
 import SprintError from './SprintError';
@@ -110,6 +112,7 @@ export default class Sprint {
   }
 
   private canCancel(canceller: GuildMember): boolean {
-    return canceller === this.#owner || canceller.hasPermission('MANAGE_MESSAGES');
+    return canceller === this.#owner
+    || canceller.permissions.has(Permissions.FLAGS.MANAGE_MESSAGES);
   }
 }
