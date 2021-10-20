@@ -1,4 +1,6 @@
-import { Client, Guild, Message } from 'discord.js';
+import {
+  Client, Guild, Intents, Message,
+} from 'discord.js';
 import WoolfServer from './WoolfServer';
 import { logger } from '../utils/logger';
 import { TOKEN } from '../utils/constants';
@@ -27,7 +29,7 @@ export default class Woolf {
 
   constructor(BotClass: typeof Client) {
     this.#connectedServers = new Map<Guild | null, WoolfServer>();
-    this.#virginia = new BotClass();
+    this.#virginia = new BotClass({ intents: [Intents.FLAGS.GUILDS] });
   }
 
   errorEvents(): Woolf {
@@ -102,10 +104,10 @@ export default class Woolf {
     }
   }
 
-  private checkServerPermissions(guild: Guild) {
+  private async checkServerPermissions(guild: Guild) {
     const botId = this.#virginia.user?.id;
     if (botId) {
-      const botMember = guild.member(botId);
+      const botMember = await guild.members.fetch(botId);
       return botMember?.permissions.has('MANAGE_ROLES');
     }
     return false;
@@ -113,7 +115,7 @@ export default class Woolf {
 
   private async createNewServer(guild: Guild) {
     try {
-      if (this.checkServerPermissions(guild)) {
+      if (await this.checkServerPermissions(guild)) {
         const newServer = new WoolfServer(guild);
         await newServer.getSprintRole();
         this.#connectedServers.set(guild, newServer);

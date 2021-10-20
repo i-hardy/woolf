@@ -44,12 +44,10 @@ export default class WoolfServer {
       return existingRole;
     }
     return this.guild.roles.create({
-      data: {
-        name: ROLE_NAME,
-        color: ROLE_COLOR,
-        mentionable: true,
-        position: this.rolePosition,
-      },
+      name: ROLE_NAME,
+      color: ROLE_COLOR,
+      mentionable: true,
+      position: this.rolePosition,
     });
   }
 

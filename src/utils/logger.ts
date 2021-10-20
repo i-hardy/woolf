@@ -33,7 +33,7 @@ function generateTransport() {
 type LoggableError = Error | SprintError | DiscordAPIError;
 
 export interface BetterLogger extends winston.Logger {
-  exception: (error: LoggableError, prefix?: string) => BetterLogger;
+  exception: (error: unknown, prefix?: string) => BetterLogger;
 }
 
 export const logger: BetterLogger = winston.createLogger({
@@ -61,5 +61,8 @@ function exceptionMessage(error: LoggableError) {
 // Monkey patching Winston because it incorrectly logs `Error` instances even in 2020
 // Related issue: https://github.com/winstonjs/winston/issues/1498
 logger.exception = function exception(error, prefix = '') {
-  return this.error(`${prefix} ${exceptionMessage(error)}`) as BetterLogger;
+  if (error instanceof Error) {
+    return this.error(`${prefix} ${exceptionMessage(error)}`) as BetterLogger;
+  }
+  return this.debug(`${prefix} ${error}`) as BetterLogger;
 };
