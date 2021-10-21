@@ -1,5 +1,6 @@
 import {
   Message, GuildMember, Permissions, Role,
+  MessageActionRow, MessageButton,
 } from 'discord.js';
 import { v4 as uuidv4 } from 'uuid';
 import UserList from './UserList';
@@ -78,8 +79,18 @@ export default class Sprint {
   }
 
   async setStart(): Promise<void> {
+    const row = new MessageActionRow()
+      .addComponents(
+        new MessageButton()
+          .setCustomId('joinsprint')
+          .setLabel('Join this sprint')
+          .setStyle('PRIMARY'),
+      );
     await this.#message.channel.send(
-      `${this.userList.userMentions()} Get ready to sprint in ${this.startIn} ${this.minutes}`,
+      {
+        content: `${this.userList.userMentions()} Get ready to sprint in ${this.startIn} ${this.minutes}`,
+        components: [row],
+      },
     );
     logger.info(`Announce sprint ${this.id}`);
     await timer(this.startIn * MINS_TO_MS);

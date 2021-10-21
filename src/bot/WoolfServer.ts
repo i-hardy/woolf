@@ -73,7 +73,7 @@ export default class WoolfServer {
   async cancelSprint(message: Message): Promise<void> {
     if (this.canJoinSprint && message.member) {
       this.#sprint.cancel?.(message.member);
-      await message.reply(cancelSprint);
+      await message.reply({ content: cancelSprint });
     } else {
       throw new SprintError(
         'No cancellable sprint',
@@ -86,7 +86,7 @@ export default class WoolfServer {
   async joinSprint(message: Message): Promise<void> {
     if (this.canJoinSprint && message.member) {
       this.#sprint.addSprinter?.(message.member);
-      await message.reply(joinSprint);
+      await message.reply({ content: joinSprint });
     } else {
       throw new SprintError(
         'No joinable sprint',
@@ -98,11 +98,11 @@ export default class WoolfServer {
 
   async receiveSprintRole(message: Message): Promise<void> {
     await message.member?.roles.add(await this.getSprintRole());
-    await message.reply(addRole);
+    await message.reply({ content: addRole });
   }
 
   async removeSprintRole(message: Message): Promise<void> {
     await message.member?.roles.remove(await this.getSprintRole());
-    await message.reply(removeRole);
+    await message.reply({ content: removeRole });
   }
 }

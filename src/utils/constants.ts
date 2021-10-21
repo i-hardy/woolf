@@ -8,7 +8,9 @@ type Environment =
 
 export const ENV: Environment = process.env.NODE_ENV as Environment || 'development';
 
-export const TOKEN = process.env.WOOLF_BOT_TOKEN;
+export const TOKEN = process.env.WOOLF_BOT_TOKEN || '';
+
+export const CLIENT_ID = process.env.WOOLF_CLIENT_ID || '';
 
 export const FLICKR_KEY = process.env.FLICKR_API_KEY || '';
 

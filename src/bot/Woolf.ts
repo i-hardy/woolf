@@ -1,5 +1,5 @@
 import {
-  Client, Guild, Intents, Message,
+  Client, Guild, Intents, Message, Permissions,
 } from 'discord.js';
 import WoolfServer from './WoolfServer';
 import { logger } from '../utils/logger';
@@ -7,8 +7,10 @@ import { TOKEN } from '../utils/constants';
 import { COMMAND, INFO, QUOTE } from '../utils/regexes';
 import memoize from '../utils/memoize';
 import { commandsMap, commandsList } from '../commands';
+import { lookupSlashCommands } from '../commands/lookupCommands';
 import { commandList } from '../responses.json';
 import SprintError from '../sprints/SprintError';
+import { setUpSlashCommandsForGuild } from '../commands/slashCommands/setup';
 
 type WoolfServerCollection = Map<Guild | null, WoolfServer>;
 
@@ -17,7 +19,7 @@ async function respondToMention(message: Message) {
     await message.channel.send(commandList);
     logger.info(`Command list sent in ${message.guild?.name ?? 'no server'}`);
   } catch (error) {
-    message.reply('sorry, an error occurred when I tried to do that').catch(() => null);
+    message.reply({ content: 'sorry, an error occurred when I tried to do that' }).catch(() => null);
     logger.exception(error, `Error responding to mention in ${message.guild?.name ?? 'no server'}`);
   }
 }
@@ -29,7 +31,9 @@ export default class Woolf {
 
   constructor(BotClass: typeof Client) {
     this.#connectedServers = new Map<Guild | null, WoolfServer>();
-    this.#virginia = new BotClass({ intents: [Intents.FLAGS.GUILDS] });
+    this.#virginia = new BotClass({
+      intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
+    });
   }
 
   errorEvents(): Woolf {
@@ -65,9 +69,21 @@ export default class Woolf {
   }
 
   messageEvents(): Woolf {
-    this.#virginia.on('message', (message) => {
+    this.#virginia.on('interactionCreate', async (interaction) => {
+      if (interaction.isButton()) {
+        console.log('sprinting!')
+      }
+      if (!interaction.isCommand()) return;
+      const { commandName } = interaction;
+
+      lookupSlashCommands
+        .get(commandName)?.(interaction);
+    });
+
+    this.#virginia.on('messageCreate', (message) => {
       if (this.isIgnorable(message.content)) return;
       const botId = this.#virginia.user?.id;
+
       if (botId && message.mentions.has(botId, { ignoreRoles: true, ignoreEveryone: true })) {
         respondToMention(message);
       } else if (message.content.match(COMMAND)) {
@@ -98,7 +114,7 @@ export default class Woolf {
         if (error instanceof SprintError && error.userMessage) {
           errorResponse = error.userMessage;
         }
-        message.reply(errorResponse).catch(() => null);
+        message.reply({ content: errorResponse }).catch(() => null);
         logger.exception(error, `Error executing ${message.content} in ${message.guild?.name ?? 'no server'}`);
       }
     }
@@ -108,7 +124,7 @@ export default class Woolf {
     const botId = this.#virginia.user?.id;
     if (botId) {
       const botMember = await guild.members.fetch(botId);
-      return botMember?.permissions.has('MANAGE_ROLES');
+      return botMember?.permissions.any(Permissions.FLAGS.MANAGE_ROLES);
     }
     return false;
   }
@@ -118,6 +134,7 @@ export default class Woolf {
       if (await this.checkServerPermissions(guild)) {
         const newServer = new WoolfServer(guild);
         await newServer.getSprintRole();
+        await setUpSlashCommandsForGuild(guild);
         this.#connectedServers.set(guild, newServer);
       }
     } catch (error) {

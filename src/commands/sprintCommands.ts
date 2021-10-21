@@ -28,3 +28,9 @@ export const sprintCommands: CommandCollection = new Map([
   [/!sprint role/, sprintRole],
   [/!remove sprint role/, removeSprintRole],
 ]);
+
+export const sprintSlashCommands = new Map([
+  ['sprint', sprint],
+  ['sprinting', sprinting],
+  ['cancel', cancelSprint],
+]);

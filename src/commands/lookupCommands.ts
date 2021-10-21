@@ -1,10 +1,12 @@
+import { CommandInteraction, Message } from 'discord.js';
 import {
   CommandCollection,
-  CommandFunction,
   DatamuseCommandArgs,
   DatamuseCommandType,
   DatamuseWord,
   FlickrPhoto,
+  LookupCommandFunction,
+  Replyable,
 } from './types';
 import { datamuse, flickr } from './http';
 import { noResult, support } from '../responses.json';
@@ -26,9 +28,20 @@ function cleanUpResponse(words: DatamuseWord[]) {
   return words.map(({ word }) => word).join(', ');
 }
 
-async function getDatamuseResponse(content: string, [regex, query]: DatamuseCommandArgs):
+function getTargetWord(message: Replyable, regex: RegExp) {
+  if (message instanceof Message) {
+    const [, word] = message.content.match(regex) || [];
+    return word || '';
+  }
+  if (message instanceof CommandInteraction) {
+    return message.options.getString('word') || '';
+  }
+  return '';
+}
+
+async function getDatamuseResponse(message: Replyable, [regex, query]: DatamuseCommandArgs):
 Promise<string> {
-  const [, word] = content.match(regex) || [];
+  const word = getTargetWord(message, regex);
   if (word) {
     const response = await datamuse.get('/', {
       params: {
@@ -44,24 +57,24 @@ Promise<string> {
   return noResult;
 }
 
-const synonym: CommandFunction = async function synonym(message) {
-  await message.reply(await getDatamuseResponse(message.content, datamuseArgs.synonym));
+const synonym: LookupCommandFunction = async function synonym(message) {
+  await message.reply(await getDatamuseResponse(message, datamuseArgs.synonym));
 };
 
-const antonym: CommandFunction = async function antonym(message) {
-  await message.reply(await getDatamuseResponse(message.content, datamuseArgs.antonym));
+const antonym: LookupCommandFunction = async function antonym(message) {
+  await message.reply(await getDatamuseResponse(message, datamuseArgs.antonym));
 };
 
-const rhyme: CommandFunction = async function rhyme(message) {
-  await message.reply(await getDatamuseResponse(message.content, datamuseArgs.rhyme));
+const rhyme: LookupCommandFunction = async function rhyme(message) {
+  await message.reply(await getDatamuseResponse(message, datamuseArgs.rhyme));
 };
 
-const triggers: CommandFunction = async function trigger(message) {
-  await message.reply(await getDatamuseResponse(message.content, datamuseArgs.triggers));
+const triggers: LookupCommandFunction = async function trigger(message) {
+  await message.reply(await getDatamuseResponse(message, datamuseArgs.triggers));
 };
 
-const describe: CommandFunction = async function describe(message) {
-  await message.reply(await getDatamuseResponse(message.content, datamuseArgs.describe));
+const describe: LookupCommandFunction = async function describe(message) {
+  await message.reply(await getDatamuseResponse(message, datamuseArgs.describe));
 };
 
 async function getFlickrResponse(): Promise<FlickrPhoto[]> {
@@ -73,7 +86,7 @@ async function getFlickrResponse(): Promise<FlickrPhoto[]> {
   }
 }
 
-const inspire: CommandFunction = async function inspire(message) {
+const inspire: LookupCommandFunction = async function inspire(message) {
   const photos = await getFlickrResponse();
   const toShow = photos[Math.floor(Math.random() * photos.length)];
   if (toShow?.url_l) {
@@ -81,8 +94,8 @@ const inspire: CommandFunction = async function inspire(message) {
   }
 };
 
-const woolfSupport: CommandFunction = async function woolfSupport(message) {
-  await message.channel.send(support);
+const woolfSupport: LookupCommandFunction = async function woolfSupport(message) {
+  await message.channel?.send(support);
 };
 
 export const lookupCommands: CommandCollection = new Map([
@@ -93,4 +106,13 @@ export const lookupCommands: CommandCollection = new Map([
   [DESCRIBE, describe],
   [INSPIRE, inspire],
   [SUPPORT, woolfSupport],
+]);
+
+export const lookupSlashCommands = new Map([
+  ['synonym', synonym],
+  ['antonym', antonym],
+  ['rhyme', rhyme],
+  ['triggers', triggers],
+  ['describe', describe],
+  ['inspire', inspire],
 ]);
