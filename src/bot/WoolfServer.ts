@@ -77,8 +77,8 @@ export default class WoolfServer {
 
   async cancelSprint(message: Replyable): Promise<void> {
     if (this.canJoinSprint && message.member) {
-      // this.#sprint.cancel?.(message?.member);
-      // await message.reply({ content: cancelSprint });
+      this.#sprint.cancel?.(message?.member);
+      await message.reply({ content: cancelSprint });
     } else {
       throw new SprintError(
         'No cancellable sprint',

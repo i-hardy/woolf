@@ -1,5 +1,5 @@
 import {
-  Client, Guild, Intents, Message, Permissions,
+  ButtonInteraction, Client, CommandInteraction, Guild, Intents, Message, Permissions,
 } from 'discord.js';
 import WoolfServer from './WoolfServer';
 import { logger } from '../utils/logger';
@@ -11,7 +11,7 @@ import {
 } from '../commands';
 import { commandList } from '../responses.json';
 import SprintError from '../sprints/SprintError';
-import { setUpSlashCommandsForGuild } from '../commands/slashCommands/setup';
+import { setUpSlashCommands } from '../commands/slashCommands/setup';
 
 type WoolfServerCollection = Map<Guild | null, WoolfServer>;
 
@@ -25,6 +25,19 @@ async function respondToMention(message: Message) {
   }
 }
 
+function handleInteractionError(
+  error: unknown,
+  interaction: CommandInteraction | ButtonInteraction,
+  attempted: string,
+) {
+  let errorResponse = 'sorry, an error occurred when I tried to do that';
+  if (error instanceof SprintError && error.userMessage) {
+    errorResponse = error.userMessage;
+  }
+  interaction.reply({ content: errorResponse }).catch(() => null);
+  logger.exception(error, `Error executing ${attempted} in ${interaction.guild?.name ?? 'no server'}`);
+}
+
 export default class Woolf {
   #virginia: Client;
 
@@ -33,7 +46,11 @@ export default class Woolf {
   constructor(BotClass: typeof Client) {
     this.#connectedServers = new Map<Guild | null, WoolfServer>();
     this.#virginia = new BotClass({
-      intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
+      intents: [
+        Intents.FLAGS.GUILDS,
+        Intents.FLAGS.GUILD_MESSAGES,
+        Intents.FLAGS.GUILD_INTEGRATIONS,
+      ],
     });
   }
 
@@ -54,6 +71,7 @@ export default class Woolf {
       await Promise.all(this.#virginia.guilds.cache.map(async (guild) => {
         await this.createNewServer(guild);
       }));
+      await setUpSlashCommands();
       logger.info(`Woolf started. ${this.#connectedServers.size} servers verified and connected!`);
     });
 
@@ -72,16 +90,24 @@ export default class Woolf {
   messageEvents(): Woolf {
     this.#virginia.on('interactionCreate', async (interaction) => {
       if (interaction.isButton()) {
-        buttonCommandsMap.get(interaction.customId)?.(
-          interaction,
-          this.#connectedServers.get(interaction.guild),
-        );
+        try {
+          await buttonCommandsMap.get(interaction.customId)?.(
+            interaction,
+            this.#connectedServers.get(interaction.guild),
+          );
+        } catch (error) {
+          handleInteractionError(error, interaction, interaction.customId);
+        }
       }
-      if (!interaction.isCommand()) return;
-      const { commandName } = interaction;
-
-      slashCommandsMap
-        .get(commandName)?.(interaction, this.#connectedServers.get(interaction.guild));
+      if (interaction.isCommand()) {
+        const { commandName } = interaction;
+        try {
+          await slashCommandsMap
+            .get(commandName)?.(interaction, this.#connectedServers.get(interaction.guild));
+        } catch (error) {
+          handleInteractionError(error, interaction, commandName);
+        }
+      }
     });
 
     this.#virginia.on('messageCreate', (message) => {
@@ -138,7 +164,6 @@ export default class Woolf {
       if (await this.checkServerPermissions(guild)) {
         const newServer = new WoolfServer(guild);
         await newServer.getSprintRole();
-        await setUpSlashCommandsForGuild(guild);
         this.#connectedServers.set(guild, newServer);
       }
     } catch (error) {

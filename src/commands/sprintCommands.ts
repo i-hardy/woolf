@@ -21,6 +21,8 @@ const sprintingButton: CommandFunctionWithButton = async function sprintingButto
 };
 
 const cancelSprint: CommandFunction = async function cancelSprint(message, server) {
+  console.log(message);
+
   await server?.cancelSprint(message);
 };
 
