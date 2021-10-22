@@ -1,55 +1,55 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
+import { sprintCommands, lookupCommands } from './commandDescriptions.json';
+
+type CommandParameters = {
+  name: string;
+  description: string;
+  required: boolean;
+};
+
+type SlashCommandBuilderWithOptions = Omit<SlashCommandBuilder, 'addSubcommand' | 'addSubcommandGroup'>;
+
+const sprint = Object.entries(sprintCommands).map(
+  ([commandName, details]) => {
+    const slashCommand = new SlashCommandBuilder()
+      .setName(commandName)
+      .setDescription(details.description);
+    if (details.parameters.length) {
+      const withParameters = (details.parameters as CommandParameters[])
+        .reduce<SlashCommandBuilderWithOptions>((commandBuilder, param) => commandBuilder
+        .addIntegerOption(
+          (option) => option
+            .setName(param.name)
+            .setDescription(param.description)
+            .setRequired(param.required),
+        ), slashCommand);
+      return withParameters;
+    }
+    return slashCommand;
+  },
+);
+
+const lookup = Object.entries(lookupCommands).map(
+  ([commandName, details]) => {
+    const slashCommand = new SlashCommandBuilder()
+      .setName(commandName)
+      .setDescription(details.description);
+    if (details.parameters.length) {
+      const withParameters = (details.parameters as CommandParameters[])
+        .reduce<SlashCommandBuilderWithOptions>((commandBuilder, param) => commandBuilder
+        .addStringOption(
+          (option) => option
+            .setName(param.name)
+            .setDescription(param.description)
+            .setRequired(param.required),
+        ), slashCommand);
+      return withParameters;
+    }
+    return slashCommand;
+  },
+);
 
 export const commands = [
-  new SlashCommandBuilder()
-    .setName('sprint')
-    .setDescription('Start a writing sprint')
-    .addIntegerOption(
-      (option) => option.setName('startin').setDescription('Time in minutes until the sprint starts').setRequired(true),
-    )
-    .addIntegerOption(
-      (option) => option.setName('duration').setDescription('Time in minutes for the sprint to last').setRequired(true),
-    ),
-  new SlashCommandBuilder()
-    .setName('sprintrole')
-    .setDescription('Receive the \'sprinters\' role'),
-  new SlashCommandBuilder()
-    .setName('removesprintrole')
-    .setDescription('Remove the \'sprinters\' role from yourself'),
-  new SlashCommandBuilder()
-    .setName('cancelsprint')
-    .setDescription('Cancel the current sprint'),
-  new SlashCommandBuilder()
-    .setName('synonym')
-    .setDescription('Gets you a synonym')
-    .addStringOption(
-      (option) => option.setName('word').setDescription('The word to find a synonym for').setRequired(true),
-    ),
-  new SlashCommandBuilder()
-    .setName('antonym')
-    .setDescription('Gets you an antonym')
-    .addStringOption(
-      (option) => option.setName('word').setDescription('The word to find an antonym for').setRequired(true),
-    ),
-  new SlashCommandBuilder()
-    .setName('rhyme')
-    .setDescription('Gets you a rhyme')
-    .addStringOption(
-      (option) => option.setName('word').setDescription('The word to find a rhyme for').setRequired(true),
-    ),
-  new SlashCommandBuilder()
-    .setName('related')
-    .setDescription('Gets you words associated with a word')
-    .addStringOption(
-      (option) => option.setName('word').setDescription('The word to find associations for').setRequired(true),
-    ),
-  new SlashCommandBuilder()
-    .setName('describe')
-    .setDescription('Gets you adjectives to describe a noun')
-    .addStringOption(
-      (option) => option.setName('word').setDescription('The word to find descriptions for').setRequired(true),
-    ),
-  new SlashCommandBuilder()
-    .setName('inspire')
-    .setDescription('Gets you an inspiring photo'),
+  ...sprint,
+  ...lookup,
 ];

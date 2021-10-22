@@ -1,0 +1,87 @@
+{
+  "sprintCommands": {
+    "sprint": {
+      "description": "Start a writing sprint",
+      "parameters": [
+        {
+          "name": "startin",
+          "description": "Time in minutes until the sprint starts",
+          "required": true
+        },
+        {
+          "name": "duration",
+          "description": "Time in minutes for the sprint to last",
+          "required": true
+        }
+      ]
+    },
+    "sprintrole": {
+      "description": "Receive the 'sprinters' role",
+      "parameters": []
+    },
+    "removesprintrole": {
+      "description": "Remove the 'sprinters' role from yourself",
+      "parameters": []
+    },
+    "cancelsprint": {
+      "description": "Cancel the current sprint",
+      "parameters": []
+    }
+  },
+  "lookupCommands": {
+    "synonym": {
+      "description": "Get a synonym for a word",
+      "parameters": [
+        {
+          "name": "word",
+          "description": "The word to find a synonym for",
+          "required": true
+        }
+      ]
+    },
+    "antonym": {
+      "description": "Get an antonym for a word",
+      "parameters": [
+        {
+          "name": "word",
+          "description": "The word to find an antonym for",
+          "required": true
+        }
+      ]
+    },
+    "rhyme": {
+      "description": "Get a rhyme for a word",
+      "parameters": [
+        {
+          "name": "word",
+          "description": "The word to find a rhyme for",
+          "required": true
+        }
+      ]
+    },
+    "related": {
+      "description": "Gets you words associated with a word",
+      "parameters": [
+        {
+          "name": "word",
+          "description": "The word to find associations for",
+          "required": true
+        }
+      ]
+    },
+    "describe": {
+      "description": "Gets you adjectives to describe a noun",
+      "parameters": [
+        {
+          "name": "word",
+          "description": "The word to find descriptions for",
+          "required": true
+        }
+      ]
+    },
+    "inspire": {
+      "description": "Gets you an inspiring photo",
+      "parameters": []
+    }
+  }
+}
