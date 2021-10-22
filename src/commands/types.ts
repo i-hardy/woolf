@@ -1,13 +1,13 @@
-import { CommandInteraction, Message } from 'discord.js';
+import { ButtonInteraction } from 'discord.js';
 import WoolfServer from '../bot/WoolfServer';
+import { Replyable } from '../utils/types';
 
-export type Replyable = Message | CommandInteraction;
 export interface CommandFunction {
-  (message: Message, server?: WoolfServer): Promise<void>;
+  (message: Replyable, server?: WoolfServer): Promise<void>;
 }
 
-export interface LookupCommandFunction {
-  (replyable: Replyable): Promise<void>;
+export interface CommandFunctionWithButton {
+  (message: ButtonInteraction, server?: WoolfServer): Promise<void>;
 }
 
 export type CommandCollection = Map<RegExp, CommandFunction>;

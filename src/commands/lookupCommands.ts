@@ -5,14 +5,14 @@ import {
   DatamuseCommandType,
   DatamuseWord,
   FlickrPhoto,
-  LookupCommandFunction,
-  Replyable,
+  CommandFunction,
 } from './types';
 import { datamuse, flickr } from './http';
-import { noResult, support } from '../responses.json';
+import { noResult } from '../responses.json';
 import {
-  INSPIRE, SYN, ANT, RHYME, TRIGGER, DESCRIBE, SUPPORT,
+  INSPIRE, SYN, ANT, RHYME, TRIGGER, DESCRIBE,
 } from '../utils/regexes';
+import { Replyable } from '../utils/types';
 
 const MAX_WORDS = 40;
 
@@ -57,23 +57,23 @@ Promise<string> {
   return noResult;
 }
 
-const synonym: LookupCommandFunction = async function synonym(message) {
+const synonym: CommandFunction = async function synonym(message) {
   await message.reply(await getDatamuseResponse(message, datamuseArgs.synonym));
 };
 
-const antonym: LookupCommandFunction = async function antonym(message) {
+const antonym: CommandFunction = async function antonym(message) {
   await message.reply(await getDatamuseResponse(message, datamuseArgs.antonym));
 };
 
-const rhyme: LookupCommandFunction = async function rhyme(message) {
+const rhyme: CommandFunction = async function rhyme(message) {
   await message.reply(await getDatamuseResponse(message, datamuseArgs.rhyme));
 };
 
-const triggers: LookupCommandFunction = async function trigger(message) {
+const triggers: CommandFunction = async function trigger(message) {
   await message.reply(await getDatamuseResponse(message, datamuseArgs.triggers));
 };
 
-const describe: LookupCommandFunction = async function describe(message) {
+const describe: CommandFunction = async function describe(message) {
   await message.reply(await getDatamuseResponse(message, datamuseArgs.describe));
 };
 
@@ -86,16 +86,12 @@ async function getFlickrResponse(): Promise<FlickrPhoto[]> {
   }
 }
 
-const inspire: LookupCommandFunction = async function inspire(message) {
+const inspire: CommandFunction = async function inspire(message) {
   const photos = await getFlickrResponse();
   const toShow = photos[Math.floor(Math.random() * photos.length)];
   if (toShow?.url_l) {
     await message.reply(toShow.url_l);
   }
-};
-
-const woolfSupport: LookupCommandFunction = async function woolfSupport(message) {
-  await message.channel?.send(support);
 };
 
 export const lookupCommands: CommandCollection = new Map([
@@ -105,7 +101,6 @@ export const lookupCommands: CommandCollection = new Map([
   [TRIGGER, triggers],
   [DESCRIBE, describe],
   [INSPIRE, inspire],
-  [SUPPORT, woolfSupport],
 ]);
 
 export const lookupSlashCommands = new Map([

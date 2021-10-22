@@ -1,13 +1,14 @@
 import {
-  Message, GuildMember, Permissions, Role,
+  GuildMember, Permissions, Role,
   MessageActionRow, MessageButton,
 } from 'discord.js';
 import { v4 as uuidv4 } from 'uuid';
+import { APIInteractionGuildMember } from 'discord-api-types';
 import UserList from './UserList';
 import SprintError from './SprintError';
 import { logger } from '../utils/logger';
-import { SPRINT } from '../utils/regexes';
 import { timer } from '../utils/timer';
+import { Replyable } from '../utils/types';
 
 const MINS_TO_MS = 60000;
 
@@ -18,19 +19,19 @@ export default class Sprint {
 
   #ended: boolean;
 
-  #message: Message;
+  #message: Replyable;
 
-  #owner: GuildMember | null;
+  #owner: GuildMember | APIInteractionGuildMember | null;
 
   #times?: number[];
 
-  constructor(message: Message) {
+  constructor(message: Replyable, times: number[]) {
     this.id = uuidv4();
     this.#ended = false;
     this.#owner = message?.member;
     this.userList = new UserList();
     this.#message = message;
-    this.startAndDuration();
+    this.#times = times;
   }
 
   get ended(): boolean {
@@ -66,7 +67,7 @@ export default class Sprint {
     logger.info(`End sprint ${this.id}`);
   }
 
-  cancel(canceller: GuildMember): void {
+  cancel(canceller: GuildMember | APIInteractionGuildMember): void {
     if (this.canCancel(canceller)) {
       this.end();
     } else {
@@ -85,8 +86,12 @@ export default class Sprint {
           .setCustomId('joinsprint')
           .setLabel('Join this sprint')
           .setStyle('PRIMARY'),
+        new MessageButton()
+          .setCustomId('cancelsprint')
+          .setLabel('Cancel sprint')
+          .setStyle('SECONDARY'),
       );
-    await this.#message.channel.send(
+    await this.#message?.reply(
       {
         content: `${this.userList.userMentions()} Get ready to sprint in ${this.startIn} ${this.minutes}`,
         components: [row],
@@ -99,7 +104,7 @@ export default class Sprint {
 
   async startSprint(): Promise<void> {
     if (this.ended) return;
-    await this.#message.channel.send(
+    await this.#message?.channel?.send(
       `${this.userList.userMentions()} ${this.length} minute sprint starts now!`,
     );
     logger.info(`Start sprint ${this.id}`);
@@ -109,7 +114,7 @@ export default class Sprint {
 
   async endSprint(): Promise<void> {
     if (this.ended) return;
-    await this.#message.channel.send(`${this.userList.userMentions()} Stop sprinting!`);
+    await this.#message?.channel?.send(`${this.userList.userMentions()} Stop sprinting!`);
     this.end();
   }
 
@@ -118,11 +123,10 @@ export default class Sprint {
     await timer(this.length * MINS_TO_MS);
   }
 
-  private startAndDuration(): void {
-    this.#times = this.#message?.content?.match(SPRINT)?.slice(1, 3).map((n) => parseInt(n, 10));
-  }
-
-  private canCancel(canceller: GuildMember): boolean {
+  private canCancel(canceller: GuildMember | APIInteractionGuildMember): boolean {
+    if (typeof canceller.permissions === 'string') {
+      return canceller === this.#owner;
+    }
     return canceller === this.#owner
     || canceller.permissions.has(Permissions.FLAGS.MANAGE_MESSAGES);
   }

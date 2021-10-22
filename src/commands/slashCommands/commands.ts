@@ -11,6 +11,15 @@ export const commands = [
       (option) => option.setName('duration').setDescription('Time in minutes for the sprint to last').setRequired(true),
     ),
   new SlashCommandBuilder()
+    .setName('sprintrole')
+    .setDescription('Receive the \'sprinters\' role'),
+  new SlashCommandBuilder()
+    .setName('removesprintrole')
+    .setDescription('Remove the \'sprinters\' role from yourself'),
+  new SlashCommandBuilder()
+    .setName('cancelsprint')
+    .setDescription('Cancel the current sprint'),
+  new SlashCommandBuilder()
     .setName('synonym')
     .setDescription('Gets you a synonym')
     .addStringOption(

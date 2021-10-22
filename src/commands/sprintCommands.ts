@@ -1,16 +1,33 @@
-import { CommandCollection, CommandFunction } from './types';
+import { CommandInteraction, Message } from 'discord.js';
+import { CommandCollection, CommandFunction, CommandFunctionWithButton } from './types';
 import { SPRINT } from '../utils/regexes';
 
 const sprint: CommandFunction = async function sprint(message, server) {
-  await server?.writingSprint(message);
+  if (message instanceof Message) {
+    const times = message?.content?.match(SPRINT)?.slice(1, 3).map((n) => parseInt(n, 10)) || [];
+    await server?.writingSprint(message, times);
+  } else if (message instanceof CommandInteraction) {
+    const times = [message.options.getInteger('startin') || 0, message.options.getInteger('duration') || 0];
+    await server?.writingSprint(message, times);
+  }
 };
 
 const sprinting: CommandFunction = async function sprinting(message, server) {
   await server?.joinSprint(message);
 };
 
+const sprintingButton: CommandFunctionWithButton = async function sprintingButton(message, server) {
+  await server?.joinSprintButton(message);
+};
+
 const cancelSprint: CommandFunction = async function cancelSprint(message, server) {
   await server?.cancelSprint(message);
+};
+
+const cancelSprintButton: CommandFunctionWithButton = async function cancelSprintButton(
+  message, server,
+) {
+  await server?.cancelSprintButton(message);
 };
 
 const sprintRole: CommandFunction = async function sprintRole(message, server) {
@@ -31,6 +48,12 @@ export const sprintCommands: CommandCollection = new Map([
 
 export const sprintSlashCommands = new Map([
   ['sprint', sprint],
-  ['sprinting', sprinting],
-  ['cancel', cancelSprint],
+  ['sprintrole', sprintRole],
+  ['removesprintrole', removeSprintRole],
+  ['cancelsprint', cancelSprint],
+]);
+
+export const sprintButtonCommands = new Map([
+  ['joinsprint', sprintingButton],
+  ['cancelsprint', cancelSprintButton],
 ]);

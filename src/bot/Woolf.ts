@@ -6,8 +6,9 @@ import { logger } from '../utils/logger';
 import { TOKEN } from '../utils/constants';
 import { COMMAND, INFO, QUOTE } from '../utils/regexes';
 import memoize from '../utils/memoize';
-import { commandsMap, commandsList } from '../commands';
-import { lookupSlashCommands } from '../commands/lookupCommands';
+import {
+  commandsMap, commandsList, slashCommandsMap, buttonCommandsMap,
+} from '../commands';
 import { commandList } from '../responses.json';
 import SprintError from '../sprints/SprintError';
 import { setUpSlashCommandsForGuild } from '../commands/slashCommands/setup';
@@ -71,13 +72,16 @@ export default class Woolf {
   messageEvents(): Woolf {
     this.#virginia.on('interactionCreate', async (interaction) => {
       if (interaction.isButton()) {
-        console.log('sprinting!')
+        buttonCommandsMap.get(interaction.customId)?.(
+          interaction,
+          this.#connectedServers.get(interaction.guild),
+        );
       }
       if (!interaction.isCommand()) return;
       const { commandName } = interaction;
 
-      lookupSlashCommands
-        .get(commandName)?.(interaction);
+      slashCommandsMap
+        .get(commandName)?.(interaction, this.#connectedServers.get(interaction.guild));
     });
 
     this.#virginia.on('messageCreate', (message) => {

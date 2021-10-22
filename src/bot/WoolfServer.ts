@@ -1,4 +1,8 @@
-import { Guild, Message, Role } from 'discord.js';
+/* eslint-disable class-methods-use-this */
+import {
+  ButtonInteraction,
+  Guild, GuildMemberRoleManager, Role,
+} from 'discord.js';
 import {
   addRole, removeRole, cancelSprint, joinSprint,
 } from '../responses.json';
@@ -7,6 +11,7 @@ import Sprint from '../sprints/Sprint';
 import { ISprint } from '../sprints/types';
 import SprintError from '../sprints/SprintError';
 import { ENV, ROLE_NAME, ROLE_COLOR } from '../utils/constants';
+import { Replyable } from '../utils/types';
 
 const BOT_NAME = ENV === 'development' ? 'testing-bot' : 'woolf';
 
@@ -51,10 +56,10 @@ export default class WoolfServer {
     });
   }
 
-  async writingSprint(message: Message): Promise<void> {
+  async writingSprint(message: Replyable, times: number[]): Promise<void> {
     if (this.canSprint) {
       try {
-        this.#sprint = new Sprint(message);
+        this.#sprint = new Sprint(message, times);
         this.#sprint.addSprinter?.(await this.getSprintRole());
         await this.#sprint.setStart?.();
       } catch (error) {
@@ -70,10 +75,10 @@ export default class WoolfServer {
     }
   }
 
-  async cancelSprint(message: Message): Promise<void> {
+  async cancelSprint(message: Replyable): Promise<void> {
     if (this.canJoinSprint && message.member) {
-      this.#sprint.cancel?.(message.member);
-      await message.reply({ content: cancelSprint });
+      // this.#sprint.cancel?.(message?.member);
+      // await message.reply({ content: cancelSprint });
     } else {
       throw new SprintError(
         'No cancellable sprint',
@@ -83,7 +88,7 @@ export default class WoolfServer {
     }
   }
 
-  async joinSprint(message: Message): Promise<void> {
+  async joinSprint(message: Replyable): Promise<void> {
     if (this.canJoinSprint && message.member) {
       this.#sprint.addSprinter?.(message.member);
       await message.reply({ content: joinSprint });
@@ -96,13 +101,31 @@ export default class WoolfServer {
     }
   }
 
-  async receiveSprintRole(message: Message): Promise<void> {
-    await message.member?.roles.add(await this.getSprintRole());
-    await message.reply({ content: addRole });
+  async cancelSprintButton(interaction: ButtonInteraction): Promise<void> {
+    if (this.canJoinSprint && interaction.member) {
+      this.#sprint.cancel?.(interaction.member);
+      await interaction.reply({ content: `${interaction.member.toString()} ${cancelSprint}` });
+    }
   }
 
-  async removeSprintRole(message: Message): Promise<void> {
-    await message.member?.roles.remove(await this.getSprintRole());
-    await message.reply({ content: removeRole });
+  async joinSprintButton(interaction: ButtonInteraction): Promise<void> {
+    if (interaction.member) {
+      this.#sprint.addSprinter?.(interaction.member);
+      await interaction.reply({ content: `${interaction.member.toString()} ${joinSprint}` });
+    }
+  }
+
+  async receiveSprintRole(message: Replyable): Promise<void> {
+    if (message.member?.roles instanceof GuildMemberRoleManager) {
+      await message.member?.roles.add?.(await this.getSprintRole());
+      await message.reply({ content: addRole });
+    }
+  }
+
+  async removeSprintRole(message: Replyable): Promise<void> {
+    if (message.member?.roles instanceof GuildMemberRoleManager) {
+      await message.member?.roles.remove(await this.getSprintRole());
+      await message.reply({ content: removeRole });
+    }
   }
 }
