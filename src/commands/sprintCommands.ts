@@ -1,5 +1,5 @@
 import { CommandInteraction, Message } from 'discord.js';
-import { CommandCollection, CommandFunction, CommandFunctionWithButton } from './types';
+import { CommandCollection, CommandFunction, ButtonFunction } from './types';
 import { SPRINT } from '../utils/regexes';
 
 const sprint: CommandFunction = async function sprint(message, server) {
@@ -16,7 +16,7 @@ const sprinting: CommandFunction = async function sprinting(message, server) {
   await server?.joinSprint(message);
 };
 
-const sprintingButton: CommandFunctionWithButton = async function sprintingButton(message, server) {
+const sprintingButton: ButtonFunction = async function sprintingButton(message, server) {
   await server?.joinSprintButton(message);
 };
 
@@ -24,9 +24,7 @@ const cancelSprint: CommandFunction = async function cancelSprint(message, serve
   await server?.cancelSprint(message);
 };
 
-const cancelSprintButton: CommandFunctionWithButton = async function cancelSprintButton(
-  message, server,
-) {
+const cancelSprintButton: ButtonFunction = async function cancelSprintButton(message, server) {
   await server?.cancelSprintButton(message);
 };
 

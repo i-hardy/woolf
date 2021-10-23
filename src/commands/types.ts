@@ -6,7 +6,7 @@ export interface CommandFunction {
   (message: Replyable, server?: WoolfServer): Promise<void>;
 }
 
-export interface CommandFunctionWithButton {
+export interface ButtonFunction {
   (message: ButtonInteraction, server?: WoolfServer): Promise<void>;
 }
 
