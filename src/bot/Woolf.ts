@@ -101,6 +101,7 @@ export default class Woolf {
       }
       if (interaction.isCommand()) {
         const { commandName } = interaction;
+        logger.info(`/${commandName} in ${interaction.guild?.name ?? 'no server'}`);
         try {
           await slashCommandsMap
             .get(commandName)?.(interaction, this.#connectedServers.get(interaction.guild));
