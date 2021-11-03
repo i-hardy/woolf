@@ -30,12 +30,16 @@ function handleInteractionError(
   interaction: CommandInteraction | ButtonInteraction,
   attempted: string,
 ) {
+  const interactionType = interaction instanceof CommandInteraction ? 'command' : 'button';
   let errorResponse = 'sorry, an error occurred when I tried to do that';
   if (error instanceof SprintError && error.userMessage) {
     errorResponse = error.userMessage;
   }
   interaction.reply({ content: errorResponse }).catch(() => null);
-  logger.exception(error, `Error executing ${attempted} in ${interaction.guild?.name ?? 'no server'}`);
+  logger.exception(
+    error,
+    `Error executing ${attempted} ${interactionType} in ${interaction.guild?.name ?? 'no server'}`,
+  );
 }
 
 export default class Woolf {
@@ -91,6 +95,7 @@ export default class Woolf {
     this.#virginia.on('interactionCreate', async (interaction) => {
       if (interaction.isButton()) {
         try {
+          logger.info(`Click on ${interaction.customId} in ${interaction.guild?.name ?? 'no server'}`);
           await buttonCommandsMap.get(interaction.customId)?.(
             interaction,
             this.#connectedServers.get(interaction.guild),

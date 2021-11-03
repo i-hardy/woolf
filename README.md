@@ -1,6 +1,6 @@
 # Woolf
 
-[![CircleCI](https://circleci.com/gh/i-hardy/woolf.svg?style=shield)](https://circleci.com/gh/i-hardy/woolf) [![join the tech support server](https://camo.githubusercontent.com/138428d1ea98178db35e122de7f154c31db968a9/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f646973636f72642d6a6f696e2d3732383944412e737667)](https://discord.gg/78R5nud) [![invite the bot to your server](https://camo.githubusercontent.com/812534660d6dee63e900fad9d956b8122159f8a8/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f626f742d696e766974652d3333333339392e737667)](https://discordapp.com/oauth2/authorize?client_id=364771016523907072&scope=bot&permissions=268435456)
+[![CircleCI](https://circleci.com/gh/i-hardy/woolf.svg?style=shield)](https://circleci.com/gh/i-hardy/woolf) [![join the tech support server](https://camo.githubusercontent.com/138428d1ea98178db35e122de7f154c31db968a9/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f646973636f72642d6a6f696e2d3732383944412e737667)](https://discord.gg/78R5nud) [![invite the bot to your server](https://camo.githubusercontent.com/812534660d6dee63e900fad9d956b8122159f8a8/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f626f742d696e766974652d3333333339392e737667)](https://discord.com/oauth2/authorize?client_id=364771016523907072&scope=applications.commands+bot&permissions=268435456)
 
 > _Five hundred a year and a bot of one's own..._
 
