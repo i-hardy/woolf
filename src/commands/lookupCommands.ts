@@ -1,6 +1,5 @@
-import { CommandInteraction, Message } from 'discord.js';
+import { CommandInteraction } from 'discord.js';
 import {
-  DatamuseCommandArgs,
   DatamuseCommandType,
   DatamuseWord,
   FlickrPhoto,
@@ -11,36 +10,30 @@ import { noResult } from '../responses.json';
 import {
   INSPIRE, SYN, ANT, RHYME, TRIGGER, DESCRIBE,
 } from '../utils/regexes';
-import { Replyable } from '../utils/types';
 
 const MAX_WORDS = 40;
 
-const datamuseArgs: { [key in DatamuseCommandType]: DatamuseCommandArgs } = {
-  synonym: [SYN, 'rel_syn'],
-  antonym: [ANT, 'rel_ant'],
-  rhyme: [RHYME, 'rel_rhy'],
-  triggers: [TRIGGER, 'rel_trg'],
-  describe: [DESCRIBE, 'rel_jjb'],
+const datamuseArgs: { [key in DatamuseCommandType]: string } = {
+  synonym: 'rel_syn',
+  antonym: 'rel_ant',
+  rhyme: 'rel_rhy',
+  triggers: 'rel_trg',
+  describe: 'rel_jjb',
 };
 
 function cleanUpResponse(words: DatamuseWord[]) {
   return words.map(({ word }) => word).join(', ');
 }
 
-function getTargetWord(message: Replyable, regex: RegExp) {
-  if (message instanceof Message) {
-    const [, word] = message.content.match(regex) || [];
-    return word || '';
-  }
-  if (message instanceof CommandInteraction) {
-    return message.options.getString('word') || '';
-  }
-  return '';
+function getTargetWord(message: CommandInteraction) {
+  return message.options.getString('word') || '';
 }
 
-async function getDatamuseResponse(message: Replyable, [regex, query]: DatamuseCommandArgs):
-Promise<string> {
-  const word = getTargetWord(message, regex);
+async function getDatamuseResponse(
+  message: CommandInteraction,
+  query: string,
+): Promise<string> {
+  const word = getTargetWord(message);
   if (word) {
     const response = await datamuse.get('/', {
       params: {

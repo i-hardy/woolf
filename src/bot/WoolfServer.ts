@@ -1,6 +1,7 @@
 /* eslint-disable class-methods-use-this */
 import {
   ButtonInteraction,
+  CommandInteraction,
   Guild, GuildMemberRoleManager, Role,
 } from 'discord.js';
 import {
@@ -11,7 +12,6 @@ import Sprint from '../sprints/Sprint';
 import { ISprint } from '../sprints/types';
 import SprintError from '../sprints/SprintError';
 import { ENV, ROLE_NAME, ROLE_COLOR } from '../utils/constants';
-import { Replyable } from '../utils/types';
 
 const BOT_NAME = ENV === 'development' ? 'testing-bot' : 'woolf';
 
@@ -56,7 +56,7 @@ export default class WoolfServer {
     });
   }
 
-  async writingSprint(message: Replyable, times: number[]): Promise<void> {
+  async writingSprint(message: CommandInteraction, times: number[]): Promise<void> {
     if (this.canSprint) {
       try {
         this.#sprint = new Sprint(message, times);
@@ -75,7 +75,7 @@ export default class WoolfServer {
     }
   }
 
-  async cancelSprint(message: Replyable): Promise<void> {
+  async cancelSprint(message: CommandInteraction): Promise<void> {
     if (this.canJoinSprint && message.member) {
       this.#sprint.cancel?.(message?.member);
       await message.reply({ content: cancelSprint });
@@ -88,7 +88,7 @@ export default class WoolfServer {
     }
   }
 
-  async joinSprint(message: Replyable): Promise<void> {
+  async joinSprint(message: CommandInteraction): Promise<void> {
     if (this.canJoinSprint && message.member) {
       this.#sprint.addSprinter?.(message.member);
       await message.reply({ content: joinSprint });
@@ -115,14 +115,14 @@ export default class WoolfServer {
     }
   }
 
-  async receiveSprintRole(message: Replyable): Promise<void> {
+  async receiveSprintRole(message: CommandInteraction): Promise<void> {
     if (message.member?.roles instanceof GuildMemberRoleManager) {
       await message.member?.roles.add?.(await this.getSprintRole());
       await message.reply({ content: addRole });
     }
   }
 
-  async removeSprintRole(message: Replyable): Promise<void> {
+  async removeSprintRole(message: CommandInteraction): Promise<void> {
     if (message.member?.roles instanceof GuildMemberRoleManager) {
       await message.member?.roles.remove(await this.getSprintRole());
       await message.reply({ content: removeRole });

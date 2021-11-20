@@ -1,9 +1,8 @@
-import { ButtonInteraction } from 'discord.js';
+import { ButtonInteraction, CommandInteraction } from 'discord.js';
 import WoolfServer from '../bot/WoolfServer';
-import { Replyable } from '../utils/types';
 
 export interface CommandFunction {
-  (message: Replyable, server?: WoolfServer): Promise<void>;
+  (message: CommandInteraction, server?: WoolfServer): Promise<void>;
 }
 
 export interface ButtonFunction {
@@ -19,8 +18,6 @@ export enum DatamuseCommandType {
   'triggers' = 'triggers',
   'describe' = 'describe',
 }
-
-export type DatamuseCommandArgs = [RegExp, string];
 
 export type DatamuseWord = {
   word: string,

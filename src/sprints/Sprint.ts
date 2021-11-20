@@ -19,13 +19,13 @@ export default class Sprint {
 
   #ended: boolean;
 
-  #message: Replyable;
+  #message: CommandInteraction;
 
   #owner: GuildMember | APIInteractionGuildMember | null;
 
   #times?: number[];
 
-  constructor(message: Replyable, times: number[]) {
+  constructor(message: CommandInteraction, times: number[]) {
     this.id = uuidv4();
     this.#ended = false;
     this.#owner = message?.member;
