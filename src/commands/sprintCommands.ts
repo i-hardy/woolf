@@ -1,5 +1,5 @@
 import { CommandInteraction, Message } from 'discord.js';
-import { CommandCollection, CommandFunction, ButtonFunction } from './types';
+import { CommandFunction, ButtonFunction } from './types';
 import { SPRINT } from '../utils/regexes';
 
 const sprint: CommandFunction = async function sprint(message, server) {
@@ -10,10 +10,6 @@ const sprint: CommandFunction = async function sprint(message, server) {
     const times = [message.options.getInteger('startin') || 0, message.options.getInteger('duration') || 0];
     await server?.writingSprint(message, times);
   }
-};
-
-const sprinting: CommandFunction = async function sprinting(message, server) {
-  await server?.joinSprint(message);
 };
 
 const sprintingButton: ButtonFunction = async function sprintingButton(message, server) {
@@ -36,12 +32,12 @@ const removeSprintRole: CommandFunction = async function removeSprintRole(messag
   await server?.removeSprintRole(message);
 };
 
-export const sprintCommands: CommandCollection = new Map([
-  [SPRINT, sprint],
-  [/!sprinting/, sprinting],
-  [/!cancel sprint/, cancelSprint],
-  [/!sprint role/, sprintRole],
-  [/!remove sprint role/, removeSprintRole],
+export const sprintCommands = new Map([
+  [SPRINT, 'Use the command /sprint instead'],
+  [/!sprinting/, 'Join a sprint by using the join button instead'],
+  [/!cancel sprint/, 'Use the command /cancelsprint, or the cancel button instead'],
+  [/!sprint role/, 'Use the command /sprintrole instead'],
+  [/!remove sprint role/, 'Use the command /removesprintrole instead'],
 ]);
 
 export const sprintSlashCommands = new Map([

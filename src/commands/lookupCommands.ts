@@ -1,6 +1,5 @@
 import { CommandInteraction, Message } from 'discord.js';
 import {
-  CommandCollection,
   DatamuseCommandArgs,
   DatamuseCommandType,
   DatamuseWord,
@@ -94,20 +93,20 @@ const inspire: CommandFunction = async function inspire(message) {
   }
 };
 
-export const lookupCommands: CommandCollection = new Map([
-  [SYN, synonym],
-  [ANT, antonym],
-  [RHYME, rhyme],
-  [TRIGGER, triggers],
-  [DESCRIBE, describe],
-  [INSPIRE, inspire],
+export const lookupCommands = new Map([
+  [SYN, 'Use the command /synonym instead'],
+  [ANT, 'Use the command /antonym instead'],
+  [RHYME, 'Use the command /rhyme instead'],
+  [TRIGGER, 'Use the command /related instead'],
+  [DESCRIBE, 'Use the command /describe instead'],
+  [INSPIRE, 'Use the command /inspire instead'],
 ]);
 
 export const lookupSlashCommands = new Map([
   ['synonym', synonym],
   ['antonym', antonym],
   ['rhyme', rhyme],
-  ['triggers', triggers],
+  ['related', triggers],
   ['describe', describe],
   ['inspire', inspire],
 ]);
