@@ -5,7 +5,7 @@
       "parameters": [
         {
           "name": "startin",
-          "description": "Time in minutes until the sprint starts",
+          "description": "Time in minutes until the sprint should start",
           "required": true
         },
         {

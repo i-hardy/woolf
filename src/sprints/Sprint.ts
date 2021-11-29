@@ -1,6 +1,6 @@
 import {
   GuildMember, Permissions, Role,
-  MessageActionRow, MessageButton,
+  MessageActionRow, MessageButton, CommandInteraction,
 } from 'discord.js';
 import { v4 as uuidv4 } from 'uuid';
 import { APIInteractionGuildMember } from 'discord-api-types';
@@ -8,7 +8,6 @@ import UserList from './UserList';
 import SprintError from './SprintError';
 import { logger } from '../utils/logger';
 import { timer } from '../utils/timer';
-import { Replyable } from '../utils/types';
 
 const MINS_TO_MS = 60000;
 

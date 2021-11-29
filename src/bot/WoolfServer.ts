@@ -88,19 +88,6 @@ export default class WoolfServer {
     }
   }
 
-  async joinSprint(message: CommandInteraction): Promise<void> {
-    if (this.canJoinSprint && message.member) {
-      this.#sprint.addSprinter?.(message.member);
-      await message.reply({ content: joinSprint });
-    } else {
-      throw new SprintError(
-        'No joinable sprint',
-        this.#sprint,
-        'there is no sprint for you to join',
-      );
-    }
-  }
-
   async cancelSprintButton(interaction: ButtonInteraction): Promise<void> {
     if (this.canJoinSprint && interaction.member) {
       this.#sprint.cancel?.(interaction.member);
@@ -109,7 +96,7 @@ export default class WoolfServer {
   }
 
   async joinSprintButton(interaction: ButtonInteraction): Promise<void> {
-    if (interaction.member) {
+    if (this.canJoinSprint && interaction.member) {
       this.#sprint.addSprinter?.(interaction.member);
       await interaction.reply({ content: `${interaction.member.toString()} ${joinSprint}` });
     }

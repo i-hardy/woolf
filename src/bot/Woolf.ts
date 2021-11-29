@@ -1,5 +1,5 @@
 import {
-  ButtonInteraction, Client, CommandInteraction, Guild, Intents, Message, Permissions,
+  Client, Guild, Intents, Message, Permissions,
 } from 'discord.js';
 import WoolfServer from './WoolfServer';
 import { logger } from '../utils/logger';
@@ -9,38 +9,11 @@ import memoize from '../utils/memoize';
 import {
   commandsMap, commandsList, slashCommandsMap, buttonCommandsMap,
 } from '../commands';
-import { commandList } from '../responses.json';
-import SprintError from '../sprints/SprintError';
 import { setUpSlashCommands } from '../commands/slashCommands/setup';
+import { handleInteractionError } from '../utils/errors';
+import { respondToMention } from '../utils/mentions';
 
 type WoolfServerCollection = Map<Guild | null, WoolfServer>;
-
-async function respondToMention(message: Message) {
-  try {
-    await message.channel.send(commandList);
-    logger.info(`Command list sent in ${message.guild?.name ?? 'no server'}`);
-  } catch (error) {
-    message.reply({ content: 'sorry, an error occurred when I tried to do that' }).catch(() => null);
-    logger.exception(error, `Error responding to mention in ${message.guild?.name ?? 'no server'}`);
-  }
-}
-
-function handleInteractionError(
-  error: unknown,
-  interaction: CommandInteraction | ButtonInteraction,
-  attempted: string,
-) {
-  const interactionType = interaction instanceof CommandInteraction ? 'command' : 'button';
-  let errorResponse = 'sorry, an error occurred when I tried to do that';
-  if (error instanceof SprintError && error.userMessage) {
-    errorResponse = error.userMessage;
-  }
-  interaction.reply({ content: errorResponse }).catch(() => null);
-  logger.exception(
-    error,
-    `Error executing ${attempted} ${interactionType} in ${interaction.guild?.name ?? 'no server'}`,
-  );
-}
 
 export default class Woolf {
   #virginia: Client;
@@ -76,7 +49,7 @@ export default class Woolf {
         await this.createNewServer(guild);
       }));
       await setUpSlashCommands();
-      logger.info(`Woolf started. ${this.#connectedServers.size} servers verified and connected!`);
+      logger.info(`Woolf started. ${this.#connectedServers.size} servers connected!`);
     });
 
     this.#virginia.on('guildCreate', (guild) => {
@@ -145,12 +118,9 @@ export default class Woolf {
       try {
         logger.info(`${message.content} in ${message.guild?.name ?? 'no server'}`);
         const deprecationMessage = commandsMap.get(command);
-        message.reply(`The ! command syntax is deprecated. ${deprecationMessage}`);
+        message.reply(`The ! command syntax is now deprecated. ${deprecationMessage}`);
       } catch (error) {
-        let errorResponse = 'sorry, an error occurred when I tried to do that';
-        if (error instanceof SprintError && error.userMessage) {
-          errorResponse = error.userMessage;
-        }
+        const errorResponse = 'sorry, an error occurred when I tried to do that';
         message.reply({ content: errorResponse }).catch(() => null);
         logger.exception(error, `Error executing ${message.content} in ${message.guild?.name ?? 'no server'}`);
       }
