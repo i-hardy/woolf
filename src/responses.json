@@ -16,8 +16,10 @@
       "- To get an interesting photo for inspiration, use **/inspire**"
     ],
     "deprecation": "The old ! commands have been deprecated because Discord will soon be restricting the ability of bots to access the content of user messages. The new slash commands work without needing to read your messages. For more information, see [this article](https://support.discord.com/hc/en-us/articles/4410940809111).",
-    "support": "[Join the Woolf tech support server](https://discordapp.com/invite/78R5nud)",
-    "invite": "[Invite Woolf to another server](https://discord.com/oauth2/authorize?client_id=364771016523907072&scope=applications.commands+bot&permissions=268435456)"
+    "links": [
+      "[Join the Woolf tech support server](https://discordapp.com/invite/78R5nud)",
+      "[Invite Woolf to another server](https://discord.com/oauth2/authorize?client_id=364771016523907072&scope=applications.commands+bot&permissions=268435456)"
+    ]
   },
   "noResult": "Little words that broke up the thought and dismembered it said nothing...",
   "addRole": "we have the habit of freedom and the courage to write exactly what we think",

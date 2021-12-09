@@ -1,5 +1,6 @@
 import {
-  Client, Guild, Intents, Message, Permissions,
+  ButtonInteraction,
+  Client, CommandInteraction, Guild, Intents, Message, Permissions,
 } from 'discord.js';
 import WoolfServer from './WoolfServer';
 import { logger } from '../utils/logger';
@@ -67,25 +68,9 @@ export default class Woolf {
   messageEvents(): Woolf {
     this.#virginia.on('interactionCreate', async (interaction) => {
       if (interaction.isButton()) {
-        try {
-          logger.info(`Click on ${interaction.customId} in ${interaction.guild?.name ?? 'no server'}`);
-          await buttonCommandsMap.get(interaction.customId)?.(
-            interaction,
-            this.#connectedServers.get(interaction.guild),
-          );
-        } catch (error) {
-          handleInteractionError(error, interaction, interaction.customId);
-        }
-      }
-      if (interaction.isCommand()) {
-        const { commandName } = interaction;
-        logger.info(`/${commandName} in ${interaction.guild?.name ?? 'no server'}`);
-        try {
-          await slashCommandsMap
-            .get(commandName)?.(interaction, this.#connectedServers.get(interaction.guild));
-        } catch (error) {
-          handleInteractionError(error, interaction, commandName);
-        }
+        this.handleButtonInteraction(interaction);
+      } else if (interaction.isCommand()) {
+        this.handleCommandInteraction(interaction);
       }
     });
 
@@ -110,6 +95,29 @@ export default class Woolf {
   stopGracefully(): Woolf {
     this.#virginia.destroy();
     return this;
+  }
+
+  private async handleButtonInteraction(interaction: ButtonInteraction) {
+    try {
+      logger.info(`Click on ${interaction.customId} in ${interaction.guild?.name ?? 'no server'}`);
+      await buttonCommandsMap.get(interaction.customId)?.(
+        interaction,
+        this.#connectedServers.get(interaction.guild),
+      );
+    } catch (error) {
+      handleInteractionError(error, interaction, interaction.customId);
+    }
+  }
+
+  private async handleCommandInteraction(interaction: CommandInteraction) {
+    const { commandName } = interaction;
+    try {
+      logger.info(`/${commandName} in ${interaction.guild?.name ?? 'no server'}`);
+      await slashCommandsMap
+        .get(commandName)?.(interaction, this.#connectedServers.get(interaction.guild));
+    } catch (error) {
+      handleInteractionError(error, interaction, commandName);
+    }
   }
 
   private async respondToCommand(message: Message) {

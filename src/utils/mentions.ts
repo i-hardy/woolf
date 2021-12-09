@@ -12,7 +12,7 @@ export async function respondToMention(message: Message): Promise<void> {
       .addFields(
         { name: 'Commands', value: commandList.commands.join('\n') },
         { name: 'Where did the old commands go?', value: commandList.deprecation },
-        { name: 'Useful links', value: `${commandList.invite}\n${commandList.support}` },
+        { name: 'Useful links', value: commandList.links.join('\n') },
       );
     await message.channel.send({ embeds: [commandsEmbed] });
     logger.info(`Command list sent in ${message.guild?.name ?? 'no server'}`);
