@@ -126,7 +126,7 @@ export default class Woolf {
       try {
         logger.info(`${message.content} in ${message.guild?.name ?? 'no server'}`);
         const deprecationMessage = commandsMap.get(command);
-        message.reply(`The ! command syntax is now deprecated. ${deprecationMessage}`);
+        message.reply(`The **!** command syntax is now deprecated. ${deprecationMessage}`);
       } catch (error) {
         const errorResponse = 'sorry, an error occurred when I tried to do that';
         message.reply({ content: errorResponse }).catch(() => null);
