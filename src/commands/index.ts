@@ -1,10 +1,5 @@
-import { sprintCommands, sprintSlashCommands, sprintButtonCommands } from './sprintCommands';
-import { lookupCommands, lookupSlashCommands } from './lookupCommands';
-
-export const commandsMap = new Map([
-  ...sprintCommands,
-  ...lookupCommands,
-]);
+import { sprintSlashCommands, sprintButtonCommands } from './sprintCommands';
+import { lookupSlashCommands } from './lookupCommands';
 
 export const slashCommandsMap = new Map([
   ...sprintSlashCommands,
@@ -14,5 +9,3 @@ export const slashCommandsMap = new Map([
 export const buttonCommandsMap = new Map([
   ...sprintButtonCommands,
 ]);
-
-export const commandsList = Array.from(commandsMap.keys());
