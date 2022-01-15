@@ -16,6 +16,19 @@ import { respondToMention } from '../utils/mentions';
 
 type WoolfServerCollection = Map<Guild | null, WoolfServer>;
 
+function commandArgsToString(command: CommandInteraction) {
+  const wordArg = command.options.getString('word');
+  const startInArg = command.options.getInteger('startin');
+  const durationArg = command.options.getInteger('duration');
+  if (wordArg) {
+    return ` ${wordArg}`;
+  }
+  if (startInArg && durationArg) {
+    return ` in ${startInArg} for ${durationArg}`;
+  }
+  return '';
+}
+
 export default class Woolf {
   #virginia: Client;
 
@@ -112,7 +125,7 @@ export default class Woolf {
   private async handleCommandInteraction(interaction: CommandInteraction) {
     const { commandName } = interaction;
     try {
-      logger.info(`/${commandName} in ${interaction.guild?.name ?? 'no server'}`);
+      logger.info(`/${commandName}${commandArgsToString(interaction)} in ${interaction.guild?.name ?? 'no server'}`);
       await slashCommandsMap
         .get(commandName)?.(interaction, this.#connectedServers.get(interaction.guild));
     } catch (error) {
