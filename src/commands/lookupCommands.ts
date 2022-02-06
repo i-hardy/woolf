@@ -7,9 +7,6 @@ import {
 } from './types';
 import { datamuse, flickr } from './http';
 import { noResult } from '../responses.json';
-import {
-  INSPIRE, SYN, ANT, RHYME, TRIGGER, DESCRIBE,
-} from '../utils/regexes';
 
 const MAX_WORDS = 40;
 
@@ -85,15 +82,6 @@ const inspire: CommandFunction = async function inspire(message) {
     await message.reply(toShow.url_l);
   }
 };
-
-export const lookupCommands = new Map([
-  [SYN, 'Use the command /synonym instead'],
-  [ANT, 'Use the command /antonym instead'],
-  [RHYME, 'Use the command /rhyme instead'],
-  [TRIGGER, 'Use the command /related instead'],
-  [DESCRIBE, 'Use the command /describe instead'],
-  [INSPIRE, 'Use the command /inspire instead'],
-]);
 
 export const lookupSlashCommands = new Map([
   ['synonym', synonym],

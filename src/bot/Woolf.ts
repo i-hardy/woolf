@@ -1,14 +1,12 @@
 import {
   ButtonInteraction,
-  Client, CommandInteraction, Guild, Intents, Message, Permissions,
+  Client, CommandInteraction, Guild, Intents, Permissions,
 } from 'discord.js';
 import WoolfServer from './WoolfServer';
 import { logger } from '../utils/logger';
 import { TOKEN } from '../utils/constants';
-import { COMMAND, INFO, QUOTE } from '../utils/regexes';
-import memoize from '../utils/memoize';
 import {
-  commandsMap, commandsList, slashCommandsMap, buttonCommandsMap,
+  slashCommandsMap, buttonCommandsMap,
 } from '../commands';
 import { setUpSlashCommands } from '../commands/slashCommands/setup';
 import { handleInteractionError } from '../utils/errors';
@@ -88,13 +86,10 @@ export default class Woolf {
     });
 
     this.#virginia.on('messageCreate', (message) => {
-      if (this.isIgnorable(message.content)) return;
       const botId = this.#virginia.user?.id;
 
       if (botId && message.mentions.has(botId, { ignoreRoles: true, ignoreEveryone: true })) {
         respondToMention(message);
-      } else if (message.content.match(COMMAND)) {
-        this.respondToCommand(message);
       }
     });
     return this;
@@ -133,21 +128,6 @@ export default class Woolf {
     }
   }
 
-  private async respondToCommand(message: Message) {
-    const command = this.findCommand(message.content);
-    if (command) {
-      try {
-        logger.info(`${message.content} in ${message.guild?.name ?? 'no server'}`);
-        const deprecationMessage = commandsMap.get(command);
-        message.reply(`The **!** command syntax is now deprecated. ${deprecationMessage}`);
-      } catch (error) {
-        const errorResponse = 'sorry, an error occurred when I tried to do that';
-        message.reply({ content: errorResponse }).catch(() => null);
-        logger.exception(error, `Error executing ${message.content} in ${message.guild?.name ?? 'no server'}`);
-      }
-    }
-  }
-
   private async checkServerPermissions(guild: Guild) {
     const botId = this.#virginia.user?.id;
     if (botId) {
@@ -168,16 +148,5 @@ export default class Woolf {
       logger.exception(error, `Error in setting up a WoolfServer instance for ${guild.name}`);
     }
     return this.#connectedServers;
-  }
-
-  /* eslint-disable class-methods-use-this */
-  @memoize
-  private findCommand(messageContent: string) {
-    return commandsList.find((command) => messageContent.match(command));
-  }
-
-  @memoize
-  private isIgnorable(messageContent: string) {
-    return messageContent.match(INFO) || messageContent.match(QUOTE);
   }
 }
