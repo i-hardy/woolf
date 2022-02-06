@@ -21,7 +21,7 @@ function commandArgsToString(command: CommandInteraction) {
   if (wordArg) {
     return ` ${wordArg}`;
   }
-  if (startInArg && durationArg) {
+  if (startInArg != null && durationArg != null) {
     return ` in ${startInArg} for ${durationArg}`;
   }
   return '';
