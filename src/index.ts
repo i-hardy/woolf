@@ -14,6 +14,10 @@ import Woolf from './bot/Woolf';
     logger.exception(error as Error, 'Unhandled promise rejection:');
   });
 
+  process.on('uncaughtException', (error) => {
+    logger.exception(error as Error, 'Uncaught exception:');
+  });
+
   process.on('SIGINT', stop);
   process.on('SIGTERM', stop);
 })();
