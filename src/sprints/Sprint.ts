@@ -3,7 +3,7 @@ import {
   MessageActionRow, MessageButton, CommandInteraction,
 } from 'discord.js';
 import { v4 as uuidv4 } from 'uuid';
-import { APIInteractionGuildMember } from 'discord-api-types';
+import { APIInteractionGuildMember } from 'discord.js/node_modules/discord-api-types';
 import UserList from './UserList';
 import SprintError from './SprintError';
 import { logger } from '../utils/logger';
@@ -20,7 +20,7 @@ export default class Sprint {
 
   #message: CommandInteraction;
 
-  #owner: GuildMember | APIInteractionGuildMember | null;
+  #owner: APIInteractionGuildMember | GuildMember | null;
 
   #times?: number[];
 

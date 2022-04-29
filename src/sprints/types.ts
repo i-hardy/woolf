@@ -1,4 +1,4 @@
-import { APIInteractionGuildMember } from 'discord-api-types';
+import { APIInteractionGuildMember } from 'discord.js/node_modules/discord-api-types';
 import { GuildMember, Role } from 'discord.js';
 
 export interface ISprint {
