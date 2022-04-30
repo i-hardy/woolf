@@ -143,6 +143,9 @@ export default class Woolf {
         const newServer = new WoolfServer(guild);
         await newServer.getSprintRole();
         this.#connectedServers.set(guild, newServer);
+        logger.info(`Bot added to ${guild.name}`);
+      } else {
+        throw new Error('Server does not have correct permissions');
       }
     } catch (error) {
       logger.exception(error, `Error in setting up a WoolfServer instance for ${guild.name}`);
