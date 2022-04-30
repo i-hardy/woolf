@@ -65,7 +65,7 @@ export default class Woolf {
     });
 
     this.#virginia.on('guildCreate', (guild) => {
-      this.createNewServer(guild);
+      this.createNewServer(guild, true);
     });
 
     this.#virginia.on('guildDelete', (guild) => {
@@ -132,18 +132,20 @@ export default class Woolf {
     const botId = this.#virginia.user?.id;
     if (botId) {
       const botMember = await guild.members.fetch(botId);
-      return botMember?.permissions.any(Permissions.FLAGS.MANAGE_ROLES);
+      const canManageRoles = botMember?.permissions.any(Permissions.FLAGS.MANAGE_ROLES);
+      const canSendMessages = botMember?.permissions.any(Permissions.FLAGS.SEND_MESSAGES);
+      return canManageRoles && canSendMessages;
     }
     return false;
   }
 
-  private async createNewServer(guild: Guild) {
+  private async createNewServer(guild: Guild, logAdded = false) {
     try {
       if (await this.checkServerPermissions(guild)) {
         const newServer = new WoolfServer(guild);
         await newServer.getSprintRole();
         this.#connectedServers.set(guild, newServer);
-        logger.info(`Bot added to ${guild.name}`);
+        if (logAdded) logger.info(`Bot added to ${guild.name}`);
       } else {
         throw new Error('Server does not have correct permissions');
       }
