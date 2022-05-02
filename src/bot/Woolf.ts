@@ -105,7 +105,7 @@ export default class Woolf {
     return this;
   }
 
-  private async handleButtonInteraction(interaction: ButtonInteraction) {
+  async handleButtonInteraction(interaction: ButtonInteraction): Promise<void> {
     try {
       logger.info(`Click on ${interaction.customId} in ${interaction.guild?.name ?? 'no server'}`);
       await buttonCommandsMap.get(interaction.customId)?.(
@@ -117,7 +117,7 @@ export default class Woolf {
     }
   }
 
-  private async handleCommandInteraction(interaction: CommandInteraction) {
+  async handleCommandInteraction(interaction: CommandInteraction): Promise<void> {
     const { commandName } = interaction;
     try {
       logger.info(`/${commandName}${commandArgsToString(interaction)} in ${interaction.guild?.name ?? 'no server'}`);
@@ -128,7 +128,7 @@ export default class Woolf {
     }
   }
 
-  private async checkServerPermissions(guild: Guild) {
+  async checkServerPermissions(guild: Guild): Promise<boolean> {
     const botId = this.#virginia.user?.id;
     if (botId) {
       const botMember = await guild.members.fetch(botId);
@@ -139,7 +139,7 @@ export default class Woolf {
     return false;
   }
 
-  private async createNewServer(guild: Guild, logAdded = false) {
+  async createNewServer(guild: Guild, logAdded = false): Promise<WoolfServerCollection> {
     try {
       if (await this.checkServerPermissions(guild)) {
         const newServer = new WoolfServer(guild);
