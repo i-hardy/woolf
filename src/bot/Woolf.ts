@@ -150,7 +150,8 @@ export default class Woolf {
         throw new Error('Server does not have correct permissions');
       }
     } catch (error) {
-      logger.exception(error, `Error in setting up a WoolfServer instance for ${guild.name}`);
+      await guild.leave();
+      logger.exception(error, `Bot could not join ${guild.name} due to an error`);
     }
     return this.#connectedServers;
   }
